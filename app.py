@@ -5,6 +5,8 @@ from flask import Flask, request, render_template
 import json
 from settings import username, password, host, database
 
+static_dir="/static/srb2_highscores"
+
 app = Flask(__name__)
 
 engine = create_engine(f"mysql+pymysql://{username}:{password}@{host}/{database}")
@@ -78,7 +80,7 @@ def maps():
 
 @app.route('/')
 def home():
-    return render_template('index.html', maps=get_maps())
+    return render_template('index.html', maps=get_maps(), static_dir=static_dir)
 
 if __name__ == '__main__':
     app.jinja_env.auto_reload = True

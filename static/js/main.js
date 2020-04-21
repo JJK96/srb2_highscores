@@ -5,7 +5,7 @@ form.addEventListener("submit", function (event) {
 })
 
 var submit = function() {
-    var url = new URL(form.action)
+    var url = new URL(window.location + "/api")
     for (const pair of new FormData(form)) {
         if (pair[1] != "") {
             url.searchParams.append(pair[0],pair[1])
