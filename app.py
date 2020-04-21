@@ -58,6 +58,12 @@ def api():
     for key in request.args:
         if key in key_to_column:
             query = query.filter(key_to_column[key] == request.args.get(key))
+    limit = request.args.get('limit')
+    if limit:
+        try:
+            query = query.limit(int(limit))
+        except ValueError:
+            pass
 
     try:
         result = query.all()

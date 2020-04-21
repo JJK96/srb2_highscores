@@ -1,11 +1,21 @@
 var form = document.getElementById("highscores_form");
 form.addEventListener("submit", function (event) {
     event.preventDefault()
-    submit()
+    submit_form()
 })
 
-var submit = function() {
-    var url = new URL(window.location + "/api")
+location.search
+    .substr(1)
+    .split("&")
+    .forEach(item => {
+        if (item) {
+            item = item.split("=");
+            document.getElementById(item[0]).value = item[1]
+        }
+    });
+
+var submit_form = function() {
+    var url = new URL(window.location + '/api')
     for (const pair of new FormData(form)) {
         if (pair[1] != "") {
             url.searchParams.append(pair[0],pair[1])
@@ -30,4 +40,4 @@ var submit = function() {
         })
 }
 
-submit()
+submit_form()

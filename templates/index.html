@@ -1,20 +1,49 @@
 <html>
 <head>
-    <link href="/static/css/main.css" type="stylesheet">
+    <link href="{{static_dir}}/css/main.css" type="stylesheet">
 </head>
 <body>
     <form id="highscores_form" action="/api">
-        <label for="username">Username</label>
-        <input id="username" name="username" type="text">
-        <label for="map_id">Map</label>
-        <select id="map_id"  name="map_id"  type="select">
-            <option value="">All maps</option>
-        {% for map in maps: %}
-            <option value="{{map.id}}">{{map.name}}</option>
-        {% endfor %}
-        </select>
-        <label for="skin">Skin</label>
-        <input id="skin"     name="skin"     type="text">
+        <table>
+            <tr>
+                <td>
+                    <label for="username">Username</label>
+                </td>
+                <td>
+                    <input id="username" name="username" type="text"></input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="map_id">Map</label>
+                </td>
+                <td>
+                    <select id="map_id"  name="map_id"  type="select" onchange="submit_form()">
+                        <option value="">All maps</option>
+                    {% for map in maps: %}
+                        <option value="{{map.id}}">{{map.name}}</option>
+                    {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="skin">Skin</label>
+                </td>
+                <td>
+                    <input id="skin"     name="skin"     type="text">
+                    </input>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="limit">#Results</label>
+                </td>
+                <td>
+                    <input id="limit" name="limit" type="number" value="20"></input>
+                </td>
+            </tr>
+        </table>
         <button type="submit">Search</button>
     </form>
     <table border=1>
@@ -30,5 +59,5 @@
         </tbody>
     </table>
 </body>
-<script src="/static/js/main.js"></script>
+<script src="{{static_dir}}/js/main.js"></script>
 </html>
