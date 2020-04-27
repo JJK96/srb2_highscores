@@ -1,3 +1,6 @@
+var base_url = ""
+var api_url = window.location.protocol + "//" + window.location.host + '/' + base_url + '/api'
+
 var form = document.getElementById("highscores_form");
 form.addEventListener("submit", function (event) {
     event.preventDefault()
@@ -15,7 +18,7 @@ location.search
     });
 
 var submit_form = function() {
-    var url = new URL(window.location + '/api')
+    var url = new URL(api_url)
     for (const pair of new FormData(form)) {
         if (pair[1] != "") {
             url.searchParams.append(pair[0],pair[1])

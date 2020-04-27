@@ -1,63 +1,37 @@
 <html>
 <head>
-    <link href="{{static_dir}}/css/main.css" type="stylesheet">
+    <link href="{{config.static_dir}}/css/main.css" type="stylesheet">
 </head>
 <body>
-    <form id="highscores_form" action="/api">
-        <table>
-            <tr>
-                <td>
-                    <label for="username">Username</label>
-                </td>
-                <td>
-                    <input id="username" name="username" type="text"></input>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="map_id">Map</label>
-                </td>
-                <td>
-                    <select id="map_id"  name="map_id"  type="select" onchange="submit_form()">
-                        <option value="">All maps</option>
-                    {% for map in maps: %}
-                        <option value="{{map.id}}">{{map.name}}</option>
-                    {% endfor %}
-                    </select>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="skin">Skin</label>
-                </td>
-                <td>
-                    <input id="skin"     name="skin"     type="text">
-                    </input>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <label for="limit">#Results</label>
-                </td>
-                <td>
-                    <input id="limit" name="limit" type="number" value="20"></input>
-                </td>
-            </tr>
+    <h1>Highscores per map and skin</h1>
+    To search highscores for a specific username, map or skin go <a href="{{config.base_url}}/search">here</a>
+    {% for map in highscores: %}
+    <div class="map_highscore">
+        <h2>{{map['name']}}</h2>
+        <table border=1>
+            <thead>
+                <tr>
+                    <th>
+                        Skin
+                    </th>
+                    <th>
+                        Time
+                    </th>
+                    <th>
+                        Username
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for skin in map['skins']: %}
+                <tr>
+                    <td>{{skin['name']}}</td>
+                    <td>{{skin['time_string']}}</td>
+                    <td>{{skin['username']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
-        <button type="submit">Search</button>
-    </form>
-    <table border=1>
-        <thead>
-            <tr>
-                <th>Username</th>
-                <th>Map</th>
-                <th>Skin</th>
-                <th>Time</th>
-            </tr>
-        </thead>
-        <tbody id="highscores_table">
-        </tbody>
-    </table>
+    </h2>
+    {% endfor %}
 </body>
-<script src="{{static_dir}}/js/main.js"></script>
-</html>
