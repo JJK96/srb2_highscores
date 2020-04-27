@@ -6,7 +6,7 @@
     <h1>Highscores per map and skin</h1>
     To search highscores for a specific username, map or skin go <a href="{{config.base_url}}/search">here</a>
     {% for map in highscores: %}
-    <div class="map_highscore">
+    <div id="{{map.id}}" class="map_highscore">
         <h2>{{map['name']}}</h2>
         <table border=1>
             <thead>
@@ -32,6 +32,6 @@
                 {% endfor %}
             </tbody>
         </table>
-    </h2>
+    </div>
     {% endfor %}
 </body>

@@ -111,6 +111,7 @@ def get_highscores():
     maps = {}
     for row in query.all():
         map = maps.get(row.map_id, {
+            'id': row.map_id,
             'name': row.mapname,
             'skins': []
         })
@@ -133,6 +134,7 @@ def api_highscores():
 def highscores_map_skin():
     return render_template('index.html',
                            highscores=get_highscores(),
+                           maps=get_maps(),
                            config=Config)
 
 
