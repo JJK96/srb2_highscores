@@ -107,7 +107,8 @@ def get_highscores():
                           (Highscore.skin == best_map.c.skin) & \
                           (Highscore.map_id == best_map.c.map_id) & \
                           (Highscore.time == best_map.c.time))) \
-        .filter(Map.id == Highscore.map_id)
+        .filter(Map.id == Highscore.map_id) \
+        .order_by(Map.id, Highscore.time.asc())
     maps = {}
     for row in query.all():
         map = maps.get(row.map_id, {
