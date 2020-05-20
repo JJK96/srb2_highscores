@@ -65,6 +65,7 @@ class Endpoint:
 def to_json(s):
     return json.dumps([x._asdict() for x in s], default=lambda o: str(o))
 
+
 @app.route('/api')
 def api():
     endpoints = [
