@@ -65,6 +65,7 @@ class Endpoint:
 def to_json(s):
     return json.dumps([x._asdict() for x in s], default=lambda o: str(o))
 
+
 @app.route('/api')
 def api():
     endpoints = [
@@ -95,6 +96,15 @@ def search():
         Highscore.time_string,
         Highscore.datetime) \
         .filter(Map.id == Highscore.map_id)
+    
+    order = request.args.get('order')
+    order_direction = request.args.get('order_direction')
+    if order in key_to_column:
+        order_by = key_to_column[order]
+        if order_direction == 'desc':
+            order_by = order_by.desc()
+        query = query.order_by(order_by)
+    query = query.order_by(Highscore.time.asc())
 
     for key in request.args:
         if key in key_to_column:
@@ -105,15 +115,6 @@ def search():
             query = query.limit(int(limit))
         except ValueError:
             pass
-
-    order = request.args.get('order')
-    order_direction = request.args.get('order_direction')
-    if order in key_to_column:
-        order_by = key_to_column[order]
-        if order_direction == 'desc':
-            order_by = order_by.desc()
-        query = query.order_by(order_by)
-    query = query.order_by(Highscore.time.asc())
 
     result = query.all()
     resp = Response(response=to_json(result), status=200, mimetype="application/json")
