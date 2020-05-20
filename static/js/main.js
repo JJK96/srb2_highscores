@@ -32,7 +32,7 @@ var submit_form = function() {
             highscores.innerHTML = ''
             for (const row of data) {
                 var score = document.createElement("tr")
-                for (const column of ['username', 'mapname', 'skin', 'time_string']) {
+                for (const column of ['username', 'mapname', 'skin', 'time_string', 'datetime']) {
                     var td = document.createElement("td")
                     td.textContent = row[column]
                     score.appendChild(td)
