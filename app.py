@@ -48,6 +48,8 @@ key_to_column = {
     'mapname': Map.name,
     'map_id': Map.id,
     'skin': Highscore.skin,
+    'time': Highscore.time,
+    'time_string': Highscore.time_string,
     'datetime': Highscore.datetime
 }
 
@@ -55,6 +57,7 @@ key_to_column = {
 class GetParam:
     param: str
     description: str
+    values: list = None
 
 @dataclass
 class Endpoint:
@@ -74,15 +77,37 @@ def api():
             GetParam('username', 'Search by username'),
             GetParam('mapname', 'Search by map name'),
             GetParam('map_id', 'Search by map id'),
-            GetParam('skin', 'Search by skin'),
-            GetParam('limit', 'Set the maximal number of records to return')
+            GetParam('skin', 'Search by skin', values=get_skins()),
+            GetParam('limit', 'Set the maximal number of records to return'),
+            GetParam('order', 'Order by any of the returned columns', values=[x for x in key_to_column.keys()]),
+            GetParam('descending', 'Set the order direction to descending')
         ]),
-        Endpoint('/api/highscores', 'Get best scores per map and skin')
+        Endpoint('/api/highscores', 'Get best scores per map and skin'),
+        Endpoint('/api/skins', 'Get the different skins in the database'),
+        Endpoint('/api/users', 'Get the different users in the database'),
     ]
     response = json.dumps({
         'endpoints': endpoints
     }, default=lambda o: o.__dict__)
     resp = Response(response=response, status=200, mimetype="application/json")
+    return resp
+
+def get_users():
+    users = db.session.query(Highscore.username).distinct().all()
+    return [x.username for x in users]
+
+def get_skins():
+    skins = db.session.query(Highscore.skin).distinct().all()
+    return [x.skin for x in skins]
+
+@app.route('/api/users')
+def api_users():
+    resp = Response(response=json.dumps(get_users()), status=200, mimetype="application/json")
+    return resp
+
+@app.route('/api/skins')
+def api_skins():
+    resp = Response(response=json.dumps(get_skins()), status=200, mimetype="application/json")
     return resp
 
 @app.route('/api/search')
@@ -98,10 +123,10 @@ def search():
         .filter(Map.id == Highscore.map_id)
     
     order = request.args.get('order')
-    order_direction = request.args.get('order_direction')
+    descending = request.args.get('descending')
     if order in key_to_column:
         order_by = key_to_column[order]
-        if order_direction == 'desc':
+        if descending:
             order_by = order_by.desc()
         query = query.order_by(order_by)
     query = query.order_by(Highscore.time.asc())
@@ -190,6 +215,9 @@ def highscores_map_skin():
 def home():
     return render_template('search.html',
                            maps=get_maps(),
+                           columns=[x for x in key_to_column.keys()],
+                           skins=get_skins(),
+                           users=get_users(),
                            config=Config)
 
 

@@ -10,7 +10,13 @@
                     <label for="username">Username</label>
                 </td>
                 <td>
-                    <input id="username" name="username" type="text"></input>
+                    <input id="username" list="users" name="username" type="text">
+                    <datalist id="users">
+                        {% for user in users: %}
+                        <option value="{{user}}">{{user}}</option>
+                        {% endfor %}
+                    </datalist>
+                    </input>
                 </td>
             </tr>
             <tr>
@@ -31,8 +37,28 @@
                     <label for="skin">Skin</label>
                 </td>
                 <td>
-                    <input id="skin"     name="skin"     type="text">
-                    </input>
+                    <select id="skin" name="skin" type="select" onchange="submit_form()">
+                        <option value="">All skins</option>
+                        {% for skin in skins: %}
+                        <option value="{{skin}}">{{skin}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="order">Order by</label>
+                </td>
+                <td>
+                    <select id="order" name="order" type="select" onchange="submit_form()">
+                        {% for column in columns: %}
+                        <option value="{{column}}" {% if column == 'time' %} selected="selected" {% endif %}>{{column}}</option>
+                        {% endfor %}
+                    </select>
+                    <select id="descending" name="descending" type="select" onchange="submit_form()">
+                        <option value="">Ascending</option>
+                        <option value="1">Descending</option>
+                    </select>
                 </td>
             </tr>
             <tr>
