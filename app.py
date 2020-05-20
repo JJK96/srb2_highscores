@@ -114,7 +114,7 @@ def search():
             query = query.limit(int(limit))
         except ValueError:
             pass
-
+    
     result = query.all()
     resp = Response(response=to_json(result), status=200, mimetype="application/json")
     return resp
