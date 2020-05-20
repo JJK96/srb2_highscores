@@ -31,7 +31,7 @@
                     <td>{{skin['name']}}</td>
                     <td>{{skin['time_string']}}</td>
                     <td>{{skin['username']}}</td>
-                    <td>{{skin['datetime']}}</td>
+                    <td>{{skin['datetime'] or ''}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
