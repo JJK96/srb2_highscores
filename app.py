@@ -1,5 +1,6 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Response
 from flask_sqlalchemy import SQLAlchemy
+from dataclasses import dataclass, field
 import json
 from settings import username, password, host, database
 
@@ -21,7 +22,7 @@ class Map(db.Model):
     name = db.Column(db.String)
 
     def __repr__(self):
-        return '{{"id":"{}, "name":"{}}}'.format(self.id, self.name)
+        return '{{"id":"{}", "name":"{}"}}'.format(self.id, self.name)
 
 
 class Highscore(db.Model):
@@ -47,13 +48,41 @@ key_to_column = {
     'skin': Highscore.skin
 }
 
+@dataclass
+class GetParam:
+    param: str
+    description: str
+
+@dataclass
+class Endpoint:
+    url: str
+    description: str
+    get_params: list = field(default_factory=list)
 
 def to_json(s):
     return json.dumps([x._asdict() for x in s])
 
-
 @app.route('/api')
 def api():
+    endpoints = [
+        Endpoint('/api/maps', 'Return all maps'),
+        Endpoint('/api/search', 'Return highscores ordered by time ascending', [
+            GetParam('username', 'Search by username'),
+            GetParam('mapname', 'Search by map name'),
+            GetParam('map_id', 'Search by map id'),
+            GetParam('skin', 'Search by skin'),
+            GetParam('limit', 'Set the maximal number of records to return')
+        ]),
+        Endpoint('/api/highscores', 'Get best scores per map and skin')
+    ]
+    response = json.dumps({
+        'endpoints': endpoints
+    }, default=lambda o: o.__dict__)
+    resp = Response(response=response, status=200, mimetype="application/json")
+    return resp
+
+@app.route('/api/search')
+def search():
     query = db.session.query(
         Highscore.username,
         Map.name.label("mapname"),
@@ -75,7 +104,8 @@ def api():
             pass
 
     result = query.all()
-    return to_json(result)
+    resp = Response(response=to_json(result), status=200, mimetype="application/json")
+    return resp
 
 
 def get_maps():
@@ -85,7 +115,8 @@ def get_maps():
 
 @app.route('/api/maps')
 def maps():
-    return str(get_maps())
+    resp = Response(response=str(get_maps()), status=200, mimetype="application/json")
+    return resp
 
 
 def get_highscores():
@@ -128,7 +159,8 @@ def get_highscores():
 
 @app.route('/api/highscores')
 def api_highscores():
-    return str(get_highscores())
+    resp = Response(response=json.dumps(get_highscores()), status=200, mimetype="application/json")
+    return resp
 
 
 @app.route('/')
