@@ -33,12 +33,14 @@ class Highscore(db.Model):
     map_id = db.Column(db.Integer, primary_key=True)
     time = db.Column(db.Integer)
     time_string = db.Column(db.String)
+    datetime = db.Column(db.DateTime)
 
     def __repr__(self):
-        return "<Highscore {}, {}, {}, {}, {}>".format(self.username,
+        return "<Highscore {}, {}, {}, {}, {}, {}>".format(self.username,
                                                        self.skin, self.map_id,
                                                        self.time,
-                                                       self.time_string)
+                                                       self.time_string,
+                                                       self.datetime)
 
 
 key_to_column = {
@@ -89,7 +91,8 @@ def search():
         Map.id.label("map_id"),
         Highscore.skin,
         Highscore.time,
-        Highscore.time_string) \
+        Highscore.time_string,
+        Highscore.datetime) \
         .filter(Map.id == Highscore.map_id) \
         .order_by(Highscore.time.asc())
 
@@ -132,7 +135,8 @@ def get_highscores():
         Highscore.skin,
         Highscore.username,
         Highscore.time,
-        Highscore.time_string
+        Highscore.time_string,
+        Highscore.datetime
     ).select_from(Map,
                   db.join(Highscore, best_map,
                           (Highscore.skin == best_map.c.skin) & \
@@ -151,7 +155,8 @@ def get_highscores():
             'name': row.skin,
             'username': row.username,
             'time': row.time,
-            'time_string': row.time_string
+            'time_string': row.time_string,
+            'datetime': row.datetime
         })
         maps[row.map_id] = map
     return [x for x in maps.values()]
