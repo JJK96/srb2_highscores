@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <link href="{{config.static_dir}}/css/main.css" type="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <h1>Highscores for map and skin</h1>
+    {% for map in highscores: %}
+    <div id="{{map.id}}" class="map_highscore">
+        <h2>{{map['name']}}</h2>
+        <table border=1>
+            <thead>
+                <tr>
+                    <th>
+                        Skin
+                    </th>
+                    <th>
+                        Time
+                    </th>
+                    <th>
+                        Username
+                    </th>
+                    <th>
+                        Timestamp
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for skin in map['skins']: %}
+                <tr>
+                    <td>{{skin['name']}}</td>
+                    <td>{{skin['time_string']}}</td>
+                    <td>{{skin['username']}}</td>
+                    <td>{{skin['datetime'] or ''}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endfor %}
+</body>

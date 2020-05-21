@@ -204,8 +204,13 @@ def api_highscores():
 
 
 @app.route('/')
+def central_hub():
+    return render_template('index.html', config=Config)
+
+
+@app.route('/bestformaps')
 def highscores_map_skin():
-    return render_template('index.html',
+    return render_template('best_for_maps.html',
                            highscores=get_highscores(),
                            maps=get_maps(),
                            config=Config)

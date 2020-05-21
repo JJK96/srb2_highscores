@@ -4,39 +4,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>Highscores per map and skin</h1>
-    To search highscores for a specific username, map or skin go <a href="{{config.base_url}}/search">here</a>
-    {% for map in highscores: %}
-    <div id="{{map.id}}" class="map_highscore">
-        <h2>{{map['name']}}</h2>
-        <table border=1>
-            <thead>
-                <tr>
-                    <th>
-                        Skin
-                    </th>
-                    <th>
-                        Time
-                    </th>
-                    <th>
-                        Username
-                    </th>
-                    <th>
-                        Timestamp
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for skin in map['skins']: %}
-                <tr>
-                    <td>{{skin['name']}}</td>
-                    <td>{{skin['time_string']}}</td>
-                    <td>{{skin['username']}}</td>
-                    <td>{{skin['datetime'] or ''}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% endfor %}
+    <h1>SRB2 Circuit Race highscore tracker</h1>
+    <ul>
+        <li><a href="{{config.base_url}}/search">Search highscores for a specific username, map or skin</a></li>
+        <li><a href="{{config.base_url}}/bestformaps">Look at the best times for every character in each map</a></li>
+    </ul>
 </body>
