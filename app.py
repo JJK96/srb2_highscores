@@ -199,7 +199,7 @@ def get_highscores():
 
 @app.route('/api/highscores')
 def api_highscores():
-    resp = Response(response=json.dumps(get_highscores()), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_highscores(), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
 
