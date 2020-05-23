@@ -2,9 +2,11 @@ from database import db, Map, Highscore, key_to_column
 from flask import Blueprint, request, Response
 from dataclasses import dataclass, field
 import json
+from collections import defaultdict
 
 api_prefix = "/api"
 api_routes = Blueprint('api', __name__)
+
 
 @dataclass
 class GetParam:
@@ -17,6 +19,7 @@ class Endpoint:
     url: str
     description: str
     get_params: list = field(default_factory=list)
+
 
 def to_json(s):
     return json.dumps([x._asdict() for x in s], default=lambda o: str(o))
@@ -72,6 +75,21 @@ def get_highscores():
         maps[row.map_id] = map
     return [x for x in maps.values()]
 
+def get_best_in_data(weights):
+    res = {}
+    skins = defaultdict(int)
+    for map in get_highscores():
+        if not weights:
+            score = map['skins'][0]
+            skins[score['name']] += 1
+        else:
+            for place, skin in enumerate(map['skins']):
+                skins[skin['username']] += weights.get(place+1, 0)
+    for k, v in sorted(skins.items(), key=lambda x: x[1], reverse=True):
+        res[k] = v
+    return res
+
+
 @api_routes.route('/')
 def api():
     endpoints = [
@@ -88,7 +106,7 @@ def api():
         Endpoint(f'{api_prefix}/highscores', 'Get best scores per map and skin'),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
-    ]
+        ]
     response = json.dumps({
         'endpoints': endpoints
     }, default=lambda o: o.__dict__)

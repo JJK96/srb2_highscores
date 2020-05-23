@@ -13,6 +13,7 @@ app.register_blueprint(api_routes, url_prefix=api_prefix)
 
 db.init_app(app)
 
+
 @app.route('/')
 def central_hub():
     return render_template('index.html', config=Config)
@@ -21,7 +22,6 @@ def central_hub():
 def highscores_map_skin():
     return render_template('best_for_maps.html',
                            highscores=get_highscores(),
-                           maps=get_maps(),
                            config=Config)
 
 @app.route('/search')
@@ -32,6 +32,37 @@ def home():
                            skins=get_skins(),
                            users=get_users(),
                            config=Config)
+
+@app.route('/bestskins')
+def best_skins():
+    return render_template('best_skins_or_users.html',
+                           data=get_best_in_data(None),
+                           table_head_param="Skin",
+                           title="Skins ordered by number of best timed tracks",
+                           config=Config)
+
+@app.route('/bestusers')
+def best_users():
+    weights = {
+    1:15,
+    2:12,
+    3:10,
+    4:8,
+    5:7,
+    6:6,
+    7:5,
+    8:4,
+    9:3,
+    10:2,
+    11:1,
+    12:0
+    }
+    return render_template('best_skins_or_users.html',
+                           data=get_best_in_data(weights),
+                           table_head_param="Player",
+                           title="Players' leaderboard (following mario kart's scoring system)",
+                           config=Config)
+
 
 if __name__ == '__main__':
     app.jinja_env.auto_reload = True
