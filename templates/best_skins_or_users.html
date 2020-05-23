@@ -1,0 +1,22 @@
+<html>
+    <head>
+        <link href="{{config.static_dir}}/css/main.css" type="stylesheet">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <h1>{{title}}</h1>
+    <table border=1>
+        <thead>
+            <tr>            
+                <th>{{table_head_param[0]}}</th>
+                <th>{{table_head_param[1]}}</th>
+            </tr>
+        </thead>
+        <tbody>        
+            {% for obj in data: %}
+            <tr>
+                <th>{{obj}}</th>
+                <th>{{data[obj]}}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
