@@ -1,7 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 
+# setup the database connector
 db = SQLAlchemy()
 
+# class for objects from the Map table
 class Map(db.Model):
     __tablename__ = 'maps'
 
@@ -11,7 +13,7 @@ class Map(db.Model):
     def __repr__(self):
         return '{{"id":"{}", "name":"{}"}}'.format(self.id, self.name)
 
-
+# class for objects from the Highscore table
 class Highscore(db.Model):
     __tablename__ = 'highscores'
 
@@ -29,7 +31,7 @@ class Highscore(db.Model):
                                                        self.time_string,
                                                        self.datetime)
 
-
+# keys for the columns of the Highscore table
 key_to_column = {
     'username': Highscore.username,
     'mapname': Map.name,
