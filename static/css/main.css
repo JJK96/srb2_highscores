@@ -170,6 +170,17 @@ body {
     opacity: 0.5;
 }
 
+.fa-arrow-up {
+    color: blue;
+}
+.fa-arrow-down {
+    color: red;
+}
+
+.clickable {
+    cursor:pointer;
+}
+
 @media (max-width: 768px) {
 	.navbar-burger {
 		display: block;

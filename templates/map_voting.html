@@ -1,0 +1,37 @@
+{% extends "highscores.html" %}
+{% block stylesheets %}
+    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <style>
+        body {
+            background-image: url("{{config.static_dir}}/img/map_voting.jpg");
+        }
+    </style>
+{% endblock %}
+{% block scripts %}
+    <script src="{{config.static_dir}}/js/map_voting.js"></script>
+{% endblock %}
+{% block content %}
+<h1>List of maps</h1>
+<table border=1>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Votes</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for map in maps: %}
+            <tr>
+                <td>{{map['name']}}</td>
+                <td>{{map['votes']}}</td>
+                <td>
+                    <i class="fa fa-arrow-up clickable" onclick="vote({{map['id']}}, true)"></i>
+                    &nbsp;
+                    <i class="fa fa-arrow-down clickable" onclick="vote({{map['id']}}, false)"></i>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
