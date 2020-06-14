@@ -4,6 +4,15 @@
     body {
         background-image: url("{{config.static_dir}}/img/home.jpg");
     }
+    #iwidy {
+    	background-image: url("{{config.static_dir}}/img/burning_sands.jpg");
+	}
+    #i6nx {
+    	background-image: linear-gradient(rgba(0, 0, 0, 0.47), rgba(0, 0, 0, 0.47)), url("{{config.static_dir}}/img/race_alley.jpg");
+	}
+	#discord_server {
+	    background-image: url("{{config.static_dir}}/img/black_core.jpg");
+    }
 </style>
 {% endblock %}
 {% block body %}
@@ -18,6 +27,12 @@ Website</h1>
 trying to popularize Circuit game type again. Gee, I wonder why are
 you surprised.</p>
 </section>
+<section class="white_text" id="discord_server">
+<h2>Discord Server</h2>
+Feel free to join <a href="https://discord.gg/dkFwrs" class="link_background">our discord server</a>!
+Using the server, we keep users up to date with the new stuff on the server,
+while also providing support and tips for beginners.
+</section>
 <section id="whatiscircuit">
 <h1 id="ifmhi" class="heading">What IS Circuit?</h1>
 <p id="iu8kc" class="paragraph">Circuit is a variation on the Race
@@ -29,7 +44,7 @@ the map's specs.</p>
 <section id="iwidy" class="bdg-sect">
 <div id="i5pmk">
 <h1>What is Sonic Robo Blast 2?</h1>
-A doom-based sonic fangame. Have a look at <a id="srb2_link" href="https://srb2.org">srb2.org</a>
+A doom-based sonic fangame. Have a look at <a id="srb2_link" class="link_background" href="https://srb2.org">srb2.org</a>
 </div>
 </section>
 {% endblock %}
