@@ -2,14 +2,15 @@ from flask import Flask, g, render_template, request, Blueprint
 app = Flask(__name__)
 import pymysql
 from config import Config
+from settings import host, username, password, voting_database
 
 map_voting = Blueprint('map_voting', __name__)
 
 mydb = pymysql.connect(
-    host = "localhost",
-    user = "root",
-    passwd = "",
-    database = "srb2_map_voting",
+    host = host,
+    user = username,
+    passwd = password,
+    database = voting_database,
     cursorclass = pymysql.cursors.DictCursor
 )
 

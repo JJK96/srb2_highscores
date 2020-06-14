@@ -1,0 +1,41 @@
+SET FOREIGN_KEY_CHECKS=0;
+drop table maps;
+drop table voted if exists;
+create table maps (id int auto_increment, name text, image text, votes int, primary key (id));
+create table voted (ip text, map int, foreign key (map) references maps(id));
+insert into maps (name, image, votes) values
+    ('Quicksand Ruins', '#', 0),
+    ('Tainted Gorge', '#', 0),
+    ('Fertile Canyon', '#', 0),
+    ('Toxic citadel', '#', 0),
+    ('Frozen night', '#', 0),
+    ('Metallic Hall', '#', 0),
+    ('Heaven Pass', '#', 0),
+    ('Sonic Circuit', '#', 0),
+    ('Slumber Circuit', '#', 0),
+    ('Race alley', '#', 0),
+    ('Burning sands', '#', 0),
+    ('Emerald coast', '#', 0),
+    ('Molten citadel', '#', 0),
+    ('Frozen night (new)', '#', 0),
+    ('Metallic Hall (new)', '#', 0),
+    ('Corrupt shrine', '#', 0),
+    ('Endless woods', '#', 0),
+    ('Egg hall', '#', 0),
+    ('Crimson caves', '#', 0),
+    ('Thunder Factory', '#', 0),
+    ('Dread valley', '#', 0),
+    ('Cyan caves', '#', 0),
+    ('Rainbow dash zone', '#', 0),
+    ('Mecha Hill zone', '#', 0),
+    ('CRIMSONCONSTRUCT', '#', 0),
+    ('Frozen slush', '#', 0),
+    ('Bizarre barrel', '#', 0),
+    ('Amber Island', '#', 0),
+    ('Crumbling magma', '#', 0),
+    ('STORM CASTLE', '#', 0),
+    ('ASTEROID CITY', '#', 0),
+    ('GRAVITY HILL', '#', 0),
+    ('Lemon Circuit', '#', 0),
+    ('Speedy Ruins', '#', 0),
+    ('Misty Marsh', '#', 0);
