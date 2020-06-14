@@ -13,12 +13,12 @@
     <div class="navbar">
         <div id="imzaq" class="navbar-container">
             <a href="/" id="i2aq8" class="navbar-brand"></a>
-            <div id="iylmi" class="navbar-burger">
+            <div id="iylmi" class="navbar-burger" onclick="toggle_menu()">
                 <div class="navbar-burger-line"></div>
                 <div class="navbar-burger-line"></div>
                 <div class="navbar-burger-line"></div>
             </div>
-            <div data-gjs="navbar-items" class="navbar-items-c">
+            <div id="navbar-items" class="navbar-items-c">
                 <nav data-gjs="navbar-menu" class="navbar-menu">
                     <a href="/" id="i7s3x" class="navbar-menu-link">Home</a>
                     <a href="/highscores" id="i64ju" class="navbar-menu-link">Highscores</a>
@@ -31,6 +31,7 @@
     {% block body %}
     {% endblock %}
 </body>
+<script src="{{config.static_dir}}/js/main.js"></script>
 {% block scripts %}
 {% endblock %}
 </html>

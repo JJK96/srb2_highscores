@@ -197,6 +197,9 @@ body {
 		display: none;
 		width: 100%;
 	}
+	.navbar-items-c.show {
+    	display: block;
+	}
 	.navbar-menu {
 		width: 100%;
 	}
