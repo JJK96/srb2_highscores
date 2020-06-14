@@ -8,7 +8,6 @@ from collections import defaultdict
 api_prefix = "/api"
 api_routes = Blueprint('api', __name__)
 
-
 # class for the api search parameters
 @dataclass
 class GetParam:

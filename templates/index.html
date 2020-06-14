@@ -1,14 +1,35 @@
-<html>
-<head>
-    <link href="{{config.static_dir}}/css/main.css" type="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body>
-    <h1>SRB2 Circuit Race highscore tracker</h1>
-    <ul>
-        <li><a href="{{config.base_url}}/search">Search highscores for a specific username, map or skin</a></li>
-        <li><a href="{{config.base_url}}/bestformaps">Look at the best times for every character in each map</a></li>
-        <li><a href="{{config.base_url}}/bestskins">Look at the best skins for the maps on the server</a></li>
-        <li><a href="{{config.base_url}}/leaderboard">Here's the leaderboard for the best players on the server</a></li>
-    </ul>
-</body>
+{% extends "base.html" %}
+{% block stylesheets %}
+<style>
+    body {
+        background-image: url("{{config.static_dir}}/img/home.png");
+    }
+</style>
+{% endblock %}
+{% block body %}
+<section id="i6nx" class="bdg-sect">
+<div id="iofq">
+    Sonic Robo Blast 2
+    <h1 id="circuit_header">Circuit Race</h1>
+</div>
+<h1 id="ihbt" class="heading">Welcome to Circuit Race Official
+Website</h1>
+<p id="ijh6" class="paragraph">We are a little community that is
+trying to popularize Circuit game type again. Gee, I wonder why are
+you surprised.</p>
+</section>
+<section id="whatiscircuit">
+<h1 id="ifmhi" class="heading">What IS Circuit?</h1>
+<p id="iu8kc" class="paragraph">Circuit is a variation on the Race
+game type, in which, instead of going through a co-op map, you
+go around a circuit to complete 4 laps the fastest. The map's
+creator might set the race to be less or more laps, hardcoded into
+the map's specs.</p>
+</section>
+<section id="iwidy" class="bdg-sect">
+<div id="i5pmk">
+<h1>What is Sonic Robo Blast 2?</h1>
+A doom-based sonic fangame. Have a look at <a id="srb2_link" href="https://srb2.org">srb2.org</a>
+</div>
+</section>
+{% endblock %}

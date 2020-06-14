@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="{{config.static_dir}}/css/main.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>SRB2 circuit race</title>
+    {% block stylesheets %}
+    {% endblock %}
+</head>
+<body>
+    <meta charset="utf-8">
+    <div class="navbar">
+        <div id="imzaq" class="navbar-container">
+            <a href="/" id="i2aq8" class="navbar-brand"></a>
+            <div id="iylmi" class="navbar-burger">
+                <div class="navbar-burger-line"></div>
+                <div class="navbar-burger-line"></div>
+                <div class="navbar-burger-line"></div>
+            </div>
+            <div data-gjs="navbar-items" class="navbar-items-c">
+                <nav data-gjs="navbar-menu" class="navbar-menu">
+                    <a href="/" id="i7s3x" class="navbar-menu-link">Home</a>
+                    <a href="/highscores" id="i64ju" class="navbar-menu-link">Highscores</a>
+                    <a href="/map_voting" id="ihy3g" class="navbar-menu-link">Map voting</a>
+                    <a href="https://discord.gg/dkFwrs" id="i1g6j" class="navbar-menu-link">Discord Server</a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% block body %}
+    {% endblock %}
+</body>
+{% block scripts %}
+{% endblock %}
+</html>
