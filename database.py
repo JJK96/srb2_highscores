@@ -9,9 +9,11 @@ class Map(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
+    image = db.Column(db.LargeBinary)
+    votes = db.Column(db.Integer)
 
     def __repr__(self):
-        return '{{"id":"{}", "name":"{}"}}'.format(self.id, self.name)
+        return '{{"id":"{}", "name":"{}", "image":"{}", "vote":"{}"}}'.format(self.id, self.name, self.image, self.vote)
 
 # class for objects from the Highscore table
 class Highscore(db.Model):
@@ -30,6 +32,17 @@ class Highscore(db.Model):
                                                        self.time,
                                                        self.time_string,
                                                        self.datetime)
+
+# class for objects from the voted table
+class Voted(db.Model):
+    __tablename__ = "voted"
+    
+    ip = db.Column(db.String, primary_key=True)
+    map = db.Column(db.Integer, primary_key=True)
+    
+    def __repr__(self):
+        return "<Voted {}, {}>".format(self.ip, 
+                                      self.map)
 
 # keys for the columns of the Highscore table
 key_to_column = {

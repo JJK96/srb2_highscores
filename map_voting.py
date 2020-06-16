@@ -1,25 +1,14 @@
 from flask import Flask, g, render_template, request, Blueprint
 app = Flask(__name__)
-import pymysql
+from database import db, Map, Voted
 from config import Config
-from settings import host, username, password, voting_database
 
 map_voting = Blueprint('map_voting', __name__)
 
-mydb = pymysql.connect(
-    host = host,
-    user = username,
-    passwd = password,
-    database = voting_database,
-    cursorclass = pymysql.cursors.DictCursor
-)
-
-c = mydb.cursor()
-
 @map_voting.route('/')
 def list():
-    c.execute("select * from maps order by votes desc")
-    maps = c.fetchall()
+    query = db.session.query(Map).order_by(Map.votes.desc())
+    maps = query.all()
     return render_template('map_voting.html', maps=maps, config=Config)
 
 @map_voting.route('/vote', methods = ['POST'])
@@ -27,11 +16,21 @@ def vote():
     map = int(request.form['map'])
     up = request.form['up'] == 'true'
     ip = request.remote_addr
-    rowcount = c.execute("select * from voted where ip = '%s' and map = %d" % (ip, map))
-    if rowcount > 0:
+    
+    rowcount = db.session.query(
+        Voted.ip,
+        Voted.map) \
+        .filter_by(ip=ip, map=map)
+    
+    if len(rowcount.all()) > 0:
         return "You have already voted on this map", 403
-    c.execute("update maps set votes = votes %s where id = %d;"
-        % ('+1' if up else '-1', map))
-    c.execute("insert into voted (ip, map) values ('%s', %d);" % (ip, map))
-    mydb.commit()
+
+    map_query = db.session.query(Map.id, 
+                                 Map.votes) \
+                                 .filter_by(id=map) \
+                                 .update({Map.votes: Map.votes + (1 if up else -1)}) 
+    
+    db.session.add(Voted(ip=ip, map=map))
+    
+    db.session.commit()
     return "thanks"
