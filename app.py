@@ -1,10 +1,11 @@
 from flask import Flask, render_template
-from api import *
-from map_voting import *
-from highscores import *
+from api import api_routes, api_prefix
+from map_voting import map_voting
+from highscores import highscores
 from config import Config
-from database import db, key_to_column
+from database import db
 from settings import username, password, host, database
+from flask_migrate import Migrate
 
 highscores_prefix="/highscores"
 map_voting_prefix="/map_voting"
@@ -12,8 +13,8 @@ map_voting_prefix="/map_voting"
 # setup the class as a Flask object
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{username}:{password}@{host}/{database}"
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False;
-app.register_blueprint(api_routes, url_prefix=highscores_prefix + api_prefix)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.register_blueprint(api_routes, url_prefix=api_prefix)
 app.register_blueprint(highscores, url_prefix=highscores_prefix)
 app.register_blueprint(map_voting, url_prefix=map_voting_prefix)
 
@@ -24,6 +25,7 @@ def central_hub():
 
 # init the database connector
 db.init_app(app)
+migrate = Migrate(app, db)
 
 # run
 if __name__ == '__main__':

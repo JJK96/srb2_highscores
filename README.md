@@ -6,7 +6,10 @@ And a page for voting on maps
 
 ## Setup
 
-1. Populate a database with data in the layout described in https://github.com/JJK96/SRB2/tree/speedrun_server/sql, this is the highscore database
+1. Install the dependencies in `requirements.txt`.
+```
+pip install -r requirements.txt
+```
 2. Populate a database with data in `sql/map_voting.sql`, this is the map_voting database
 2. Create `settings.py` with the following contents:
 ```
@@ -19,3 +22,10 @@ voting_database = "<map_voting_database_name>"
 3. `python app.py`
 
 Alternatively [wsgi](wsgi.org) can be used to run it in combination with an HTTP server.
+
+## Upgrade the database
+
+If a change has been made to the database, the migrations should be run using
+```
+flask db upgrade
+```

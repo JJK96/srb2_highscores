@@ -1,5 +1,4 @@
-from flask import Flask, g, render_template, request, Blueprint
-app = Flask(__name__)
+from flask import render_template, request, Blueprint
 from database import db, Map, Voted
 from config import Config
 
@@ -25,10 +24,9 @@ def vote():
     if len(rowcount.all()) > 0:
         return "You have already voted on this map", 403
 
-    map_query = db.session.query(Map.id, 
-                                 Map.votes) \
-                                 .filter_by(id=map) \
-                                 .update({Map.votes: Map.votes + (1 if up else -1)}) 
+    db.session.query(Map.id,  Map.votes) \
+        .filter_by(id=map) \
+        .update({Map.votes: Map.votes + (1 if up else -1)}) 
     
     db.session.add(Voted(ip=ip, map=map))
     

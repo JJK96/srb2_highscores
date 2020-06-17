@@ -5,7 +5,7 @@ import json
 from collections import defaultdict
 
 # setup the api section of the site
-api_prefix = "/api"
+api_prefix = "/highscores/api"
 api_routes = Blueprint('api', __name__)
 
 # class for the api search parameters
