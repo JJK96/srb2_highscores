@@ -21,8 +21,3 @@ function update_info_page() {
         })
     })
 }
-
-update_info_page()
-
-//Refresh the page
-window.setInterval(update_info_page, 10000);

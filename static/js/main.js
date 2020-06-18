@@ -1,5 +1,7 @@
 var api_url = window.location.protocol + "//" + window.location.host + '/highscores/api'
 
+var server_info_update_delay = 10000
+
 //Prevent XSS
 String.prototype.escape = function() {
     var tagsToReplace = {

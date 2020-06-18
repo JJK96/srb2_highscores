@@ -66,6 +66,14 @@
                 <input id="limit" name="limit" type="number" value="20"></input>
             </td>
         </tr>
+        <tr>
+            <td>
+                <label for="sync">Synch with SRB2</label>
+            </td>
+            <td>
+                <input type="checkbox" id="sync" onclick="update_sync(this)"></input>
+            </td>
+        </tr>
     </table>
     <button type="submit">Search</button>
 </form>
@@ -84,5 +92,6 @@
 </table>
 {% endblock %}
 {% block scripts %}
+<script src="{{config.static_dir}}/js/server_info.js"></script>
 <script src="{{config.static_dir}}/js/search.js"></script>
 {% endblock %}

@@ -41,3 +41,28 @@ var submit_form = function() {
 }
 
 submit_form()
+
+var synchornisation_timer = null
+
+function update_map() {
+    get_server_info(data => {
+        var map_select = document.getElementById('map_id')
+        var new_value = data.map.num-1
+        if (map_select.value != new_value) {
+            map_select.value = new_value
+            submit_form()
+        }
+    })
+}
+
+function update_sync(checkbox) {
+    if (checkbox.checked) {
+        update_map()
+        //Refresh the page
+        synchornisation_timer = window.setInterval(update_map, server_info_update_delay);
+    } else {
+        window.clearInterval(synchornisation_timer)
+        synchornisation_timer = null
+    }
+}
+

@@ -29,4 +29,10 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{config.static_dir}}/js/server_info.js"></script>
+<script>
+update_info_page()
+
+//Refresh the page
+window.setInterval(update_info_page, server_info_update_delay);
+</script>
 {% endblock %}
