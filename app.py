@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from api import api_routes, api_prefix, get_server_info
+from api import api_routes, api_prefix
 from map_voting import map_voting
 from highscores import highscores
 from config import Config
@@ -25,7 +25,7 @@ def central_hub():
 
 @app.route('/server_info')
 def server_info():
-    return render_template('server_info.html', server_info=get_server_info(), config=Config)
+    return render_template('server_info.html', config=Config)
 
 # init the database connector
 db.init_app(app)

@@ -10,9 +10,9 @@
 </style>
 {% endblock %}
 {% block title %}
-<h1>{{server_info.servername}}</h1>
+<h1 id="server_name"></h1>
 <h2>IP address/hostname: {{config.srb2_server}}</h2>
-<label>Current map</label>: {{server_info['map']['title']}}
+<label>Current map</label>: <span id="map_title"></span>
 <div class="server_info_players">
     <h2>Online players</h2>
     <table border=1>
@@ -22,14 +22,11 @@
                 <td>Skin</td>
             </tr>
         </thead>
-        <tbody>
-            {% for player in server_info.players %}
-            <tr>
-                <td>{{player['name']}}</td>
-                <td>{{player['skin']}}</td>
-            </tr>
-            {% endfor %}
+        <tbody id="players_table">
         </tbody>
     </table>
 </div>
+{% endblock %}
+{% block scripts %}
+<script src="{{config.static_dir}}/js/server_info.js"></script>
 {% endblock %}

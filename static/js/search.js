@@ -1,5 +1,3 @@
-var api_url = window.location.protocol + "//" + window.location.host + '/highscores/api'
-
 var form = document.getElementById("highscores_form");
 form.addEventListener("submit", function (event) {
     event.preventDefault()
