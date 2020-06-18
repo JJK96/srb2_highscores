@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 import json
 from collections import defaultdict
 from srb2_query import SRB2Query
+from config import Config
 
 # setup the api section of the site
 api_prefix = "/highscores/api"
@@ -328,7 +329,7 @@ def get_server_info(ip):
         serverinfo['players'].append(player)
     return serverinfo
 
-@api_routes.route('/server_info', defaults={'ip_address': "srb2circuit.eu"})
+@api_routes.route('/server_info', defaults={'ip_address': Config.srb2_server})
 @api_routes.route('/server_info/<ip_address>')
 def server_info(ip_address):
     response = json.dumps(
