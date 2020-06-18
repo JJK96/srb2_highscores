@@ -3,6 +3,7 @@ from flask import Blueprint, request, Response
 from dataclasses import dataclass, field
 import json
 from collections import defaultdict
+from srb2_query import SRB2Query
 
 # setup the api section of the site
 api_prefix = "/highscores/api"
@@ -207,7 +208,8 @@ def api():
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
         Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players'),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks'),
-        Endpoint(f'{api_prefix}/maphighscores', 'Get the highscores divided by map')
+        Endpoint(f'{api_prefix}/maphighscores', 'Get the highscores divided by map'),
+        Endpoint(f'{api_prefix}/server_info[/<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
         ]
     # return the docs as json
     response = json.dumps({
@@ -308,4 +310,29 @@ def search():
     # return the query as json
     scores = query.all()
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
+    return resp
+
+def get_server_info(ip):
+    q = SRB2Query(ip)
+    serverpkt, playerpkt = q.askinfo()
+    serverinfo = {}
+    serverinfo['servername'] = serverpkt.servername
+    serverinfo['version'] = serverpkt.version
+    serverinfo['number_of_players'] = serverpkt.numberofplayer
+    serverinfo['max_players'] = serverpkt.maxplayer
+    serverinfo['leveltime'] = serverpkt.leveltime
+    serverinfo['map'] = serverpkt.map
+    serverinfo['players'] = []
+    for player in playerpkt.players:
+        player.pop("address")
+        serverinfo['players'].append(player)
+    return serverinfo
+
+@api_routes.route('/server_info', defaults={'ip_address': "srb2circuit.eu"})
+@api_routes.route('/server_info/<ip_address>')
+def server_info(ip_address):
+    response = json.dumps(
+        get_server_info(ip_address),
+        default=lambda x: str(x))
+    resp = Response(response=response, status=200, mimetype="application/json")
     return resp

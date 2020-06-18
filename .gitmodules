@@ -1,0 +1,3 @@
+[submodule "srb2_query"]
+	path = srb2_query
+	url = git@github.com:JJK96/SRB2-Query.git
