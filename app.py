@@ -1,5 +1,5 @@
 from flask import Flask, render_template
-from api import api_routes, api_prefix
+from api import api_routes, api_prefix, get_server_info
 from map_voting import map_voting
 from highscores import highscores
 from config import Config
@@ -22,6 +22,10 @@ app.register_blueprint(map_voting, url_prefix=map_voting_prefix)
 def central_hub():
     # show the main page
     return render_template('index.html', config=Config)
+
+@app.route('/server_info')
+def server_info():
+    return render_template('server_info.html', server_info=get_server_info(), config=Config)
 
 # init the database connector
 db.init_app(app)

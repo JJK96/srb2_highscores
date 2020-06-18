@@ -1,0 +1,35 @@
+{% extends "page.html" %}
+{% block stylesheets %}
+<style>
+    body {
+        background-image: url("{{config.static_dir}}/img/burning_sands.jpg");
+    }
+    label {
+        font-weight: bold
+    }
+</style>
+{% endblock %}
+{% block title %}
+<h1>{{server_info.servername}}</h1>
+<h2>IP address/hostname: {{config.srb2_server}}</h2>
+<label>Current map</label>: {{server_info['map']['title']}}
+<div class="server_info_players">
+    <h2>Online players</h2>
+    <table border=1>
+        <thead>
+            <tr>
+                <td>Name</td>
+                <td>Skin</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in server_info.players %}
+            <tr>
+                <td>{{player['name']}}</td>
+                <td>{{player['skin']}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

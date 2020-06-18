@@ -313,7 +313,7 @@ def search():
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
     return resp
 
-def get_server_info(ip):
+def get_server_info(ip=Config.srb2_server):
     q = SRB2Query(ip)
     serverpkt, playerpkt = q.askinfo()
     serverinfo = {}

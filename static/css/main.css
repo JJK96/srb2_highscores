@@ -144,19 +144,7 @@ body {
 	background-size: auto;
 }
 
-#i7s3x {
-	color: #ffffff;
-}
-
-#i64ju {
-	color: #ffffff;
-}
-
-#ihy3g {
-	color: #ffffff;
-}
-
-#i1g6j {
+.navbar-menu-link {
 	color: #ffffff;
 }
 
@@ -187,6 +175,10 @@ body {
 
 .clickable {
     cursor:pointer;
+}
+
+thead {
+    font-weight: bold;
 }
 
 @media (max-width: 768px) {

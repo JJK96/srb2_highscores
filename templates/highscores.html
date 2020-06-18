@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "page.html" %}
 {% block stylesheets %}
 <style>
     body {
@@ -6,18 +6,14 @@
     }
 </style>
 {% endblock %}
-{% block body %}
-<div class="content">
-    {% block title %}
-        <h1>Leaderboards/highscores</h1>
-    {% endblock %}
-    {% block content %}
-        <ul>
-            <li><a href="search">Search highscores for a specific username, map or skin</a></li>
-            <li><a href="bestformaps">Look at the best times for every character in each map</a></li>
-            <li><a href="bestskins">Look at the best skins for the maps on the server</a></li>
-            <li><a href="leaderboard">Here's the leaderboard for the best players on the server</a></li>
-        </ul>
-    {% endblock %}
-</div>
+{% block title %}
+    <h1>Leaderboards/highscores</h1>
+{% endblock %}
+{% block content %}
+    <ul>
+        <li><a href="search">Search highscores for a specific username, map or skin</a></li>
+        <li><a href="bestformaps">Look at the best times for every character in each map</a></li>
+        <li><a href="bestskins">Look at the best skins for the maps on the server</a></li>
+        <li><a href="leaderboard">Here's the leaderboard for the best players on the server</a></li>
+    </ul>
 {% endblock %}
