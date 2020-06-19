@@ -13,15 +13,16 @@ class Map(db.Model):
     votes = db.Column(db.Integer, default=0)
 
     def __repr__(self):
-        return '{{"id":"{}", "name":"{}", "image":"{}", "vote":"{}"}}'.format(self.id, self.name, self.image, self.vote)
+        return '{{"id":"{}", "name":"{}", "image":"{}", "votes":"{}"}}'.format(self.id, self.name, self.image, self.votes)
 
 # class for objects from the Highscore table
 class Highscore(db.Model):
     __tablename__ = 'highscores'
 
-    username = db.Column(db.String, primary_key=True)
-    skin = db.Column(db.String, primary_key=True)
-    map_id = db.Column(db.Integer, primary_key=True)
+    score_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    username = db.Column(db.String)
+    skin = db.Column(db.String)
+    map_id = db.Column(db.Integer)
     time = db.Column(db.Integer)
     time_string = db.Column(db.String)
     datetime = db.Column(db.DateTime)

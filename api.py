@@ -202,7 +202,8 @@ def api():
             GetParam('skin', 'Search by skin', values=get_skins()),
             GetParam('limit', 'Set the maximal number of records to return'),
             GetParam('order', 'Order by any of the returned columns', values=[x for x in key_to_column.keys()]),
-            GetParam('descending', 'Set the order direction to descending')
+            GetParam('descending', 'Set the order direction to descending'),
+            GetParam('all_scores', 'Get all the scores instead of just the best ones')
         ]),
         Endpoint(f'{api_prefix}/highscores', 'Get best scores per map and skin'),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
@@ -264,7 +265,16 @@ def api_highscores():
 # when the route is api/search
 @api_routes.route('/search')
 def search():
-    # get all the highscores NOT ORDERED
+    # subquery to get the best time for each combination (User, Skin, Map)
+    best_scores = db.session.query(db.func.min(Highscore.time).label("time"),
+                             Highscore.username,
+                             Highscore.skin,
+                             Highscore.map_id) \
+                             .group_by(Highscore.username, 
+                                       Highscore.skin, 
+                                       Highscore.map_id).subquery()
+    
+    # get the highscores NOT ORDERED
     query = db.session.query(
         Highscore.username,
         Map.name.label("mapname"),
@@ -272,8 +282,20 @@ def search():
         Highscore.skin,
         Highscore.time,
         Highscore.time_string,
-        Highscore.datetime) \
-        .filter(Map.id == Highscore.map_id)
+        Highscore.datetime)
+    
+    # request the params for the type of scores
+    all_scores = request.args.get("all_scores")
+    
+    # if the request for all scores is false
+    if all_scores != "true":
+        query = query.select_from(Map, db.join(Highscore, best_scores,
+                                  (Highscore.username == best_scores.c.username) & \
+                                  (Highscore.skin == best_scores.c.skin) & \
+                                  (Highscore.map_id == best_scores.c.map_id) & \
+                                  (Highscore.time == best_scores.c.time)))
+                                      
+    query = query.filter(Map.id == Highscore.map_id)
     
     # request the params for the ordering
     order = request.args.get('order')
@@ -307,7 +329,7 @@ def search():
         except ValueError:
             # don't do anything
             pass
-    
+        
     # return the query as json
     scores = query.all()
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")

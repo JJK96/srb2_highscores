@@ -60,6 +60,17 @@
         </tr>
         <tr>
             <td>
+                <label for="all_scores">Get all scores</label>
+            </td>
+            <td>
+                <select id="all_scores" name="all_scores" onchange="submit_form()">
+                    <option value="false">Show Only Best</option>
+                    <option value="true">Show Everything</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
                 <label for="limit">#Results</label>
             </td>
             <td>
@@ -74,6 +85,7 @@
                 <input type="checkbox" id="sync" onclick="update_sync(this)"></input>
             </td>
         </tr>
+        
     </table>
     <button type="submit">Search</button>
 </form>
