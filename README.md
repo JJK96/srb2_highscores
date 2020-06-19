@@ -19,16 +19,14 @@ git submodule update --init --recursive
 ```
 pip install -r requirements.txt
 ```
-3. Populate a database with data in `sql/map_voting.sql`, this is the map_voting database
-4. Create `settings.py` with the following contents:
+3. Create `settings.py` with the following contents:
 ```
 username = "<database_username>"
 password = "<database_password>"
 host = "<database_hostname>"
-highscores_database = "<highscores_database_name>"
-voting_database = "<map_voting_database_name>"
+database = "<database_name>"
 ```
-5. `python app.py`
+4. `python app.py`
 
 Alternatively [wsgi](wsgi.org) can be used to run it in combination with an HTTP server.
 
