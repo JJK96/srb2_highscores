@@ -47,7 +47,7 @@ var synchornisation_timer = null
 function update_map() {
     get_server_info(data => {
         var map_select = document.getElementById('map_id')
-        var new_value = data.map.num-1
+        var new_value = data.map.id
         if (map_select.value != new_value) {
             map_select.value = new_value
             submit_form()
