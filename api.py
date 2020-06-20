@@ -203,7 +203,7 @@ def api():
             GetParam('limit', 'Set the maximal number of records to return'),
             GetParam('order', 'Order by any of the returned columns', values=[x for x in key_to_column.keys()]),
             GetParam('descending', 'Set the order direction to descending'),
-            GetParam('all_scores', 'Get all the scores instead of just the best ones')
+            GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones')
         ]),
         Endpoint(f'{api_prefix}/highscores', 'Get best scores per map and skin'),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
@@ -288,7 +288,7 @@ def search():
     all_scores = request.args.get("all_scores")
     
     # if the request for all scores is false
-    if all_scores != "true":
+    if all_scores != "on":
         query = query.select_from(Map, db.join(Highscore, best_scores,
                                   (Highscore.username == best_scores.c.username) & \
                                   (Highscore.skin == best_scores.c.skin) & \
