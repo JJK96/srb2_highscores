@@ -40,8 +40,10 @@ def get_skins():
     return [x.skin for x in skins]
 
 # get all the maps in the database
-def get_maps():
+def get_maps(id=None):
     query = db.session.query(Map)
+    if id:
+        query = query.filter(Map.id == id)
     return query.all()
 
 # get the best highscores for each skin in each map
@@ -195,6 +197,7 @@ def api():
     # show the docs for every endpoint in the api section
     endpoints = [
         Endpoint(f'{api_prefix}/maps', 'Return all maps'),
+        Endpoint(f'{api_prefix}/maps/<id>', 'Return the specified map'),
         Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending', [
             GetParam('username', 'Search by username'),
             GetParam('mapname', 'Search by map name'),
@@ -222,9 +225,10 @@ def api():
 
 # when the route is api/maps
 @api_routes.route('/maps')
-def maps():
+@api_routes.route('/maps/<id>')
+def maps(id=None):
     # return the maps as json
-    resp = Response(response=str(get_maps()), status=200, mimetype="application/json")
+    resp = Response(response=str(get_maps(id)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/users
