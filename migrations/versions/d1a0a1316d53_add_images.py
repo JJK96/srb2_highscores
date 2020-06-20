@@ -56,7 +56,7 @@ def upgrade():
     op.execute("update maps set image = 'Speedy_Ruins_1.jpg' where id = 891")
     op.execute("update maps set image = 'Storm_Castle_1.jpg' where id = 718")
     op.execute("update maps set image = 'Tainted_Gorge_1.jpg' where id = 856")
-    op.execute("update maps set image = 'Thunder_Factory_1.jpg' where id = 426")
+    op.execute("update maps set image = 'Thunder_Factory_1.jpg' where id = 427")
     op.execute("update maps set image = 'Toxic_Citadel_1.jpg' where id = 861")
     op.execute("update maps set image = 'Warped_Woods_1.jpg' where id = 865")
 
