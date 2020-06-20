@@ -9,8 +9,14 @@ class Map(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    image = db.Column(db.LargeBinary, default=None)
+    image = db.Column(db.String, default=None)
     votes = db.Column(db.Integer, default=0)
+
+    def get_dict(self):
+        map = {}
+        for x in ['id', 'name', 'image', 'votes']:
+            map[x] = self.__dict__[x]
+        return map
 
     def __repr__(self):
         return '{{"id":"{}", "name":"{}", "image":"{}", "votes":"{}"}}'.format(self.id, self.name, self.image, self.votes)

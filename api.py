@@ -44,6 +44,7 @@ def get_maps(id=None):
     query = db.session.query(Map)
     if id:
         query = query.filter(Map.id == id)
+        return query.one_or_none()
     return query.all()
 
 # get the best highscores for each skin in each map
@@ -348,7 +349,7 @@ def get_server_info(ip=Config.srb2_server):
     serverinfo['number_of_players'] = serverpkt.numberofplayer
     serverinfo['max_players'] = serverpkt.maxplayer
     serverinfo['leveltime'] = serverpkt.leveltime
-    serverinfo['map'] = serverpkt.map
+    serverinfo['map'] = get_maps(serverpkt.map['num']-1).get_dict()
     serverinfo['players'] = []
     for player in playerpkt.players:
         player.pop("address")

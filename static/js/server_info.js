@@ -11,8 +11,9 @@ var map_title = document.getElementById("map_title")
 
 function update_info_page() {
     get_server_info(data => {
-        map_title.innerHTML = data.map.title
+        map_title.innerHTML = data.map.name
         server_name.innerHTML = data.servername
+        document.body.style.backgroundImage = "url('" + static_dir + "/img/" + data.map.image + "')"
         players_table.innerHTML = ""
         data.players.forEach(player => {
             var tr = document.createElement('tr')
