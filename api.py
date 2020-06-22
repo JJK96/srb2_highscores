@@ -131,8 +131,8 @@ def get_highscores_by_map():
     return res
 
 # Gets the best skins or leaderboard of users in the database 
-# returns the skins when arg with_weights is false and the leaderboard when it's true
-def get_best_in_data(with_weights):
+# returns the leaderboard when arg for_leaderboard is true and the best skins when it's false
+def get_best_in_data(for_leaderboard):
     # setup the dictionaries for the storing of the results
     res = {}
     scoring = defaultdict(int)
@@ -159,7 +159,7 @@ def get_best_in_data(with_weights):
     # for every map in the highscores
     for map_scores in highscores:
         # if must return the best skins
-        if not with_weights:
+        if not for_leaderboard:
             # get the scores
             scores = highscores[map_scores]
             # save the point in the dictionary by the first score's skin

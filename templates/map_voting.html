@@ -18,6 +18,7 @@
 <table border=1>
     <thead>
         <tr>
+            <th>Image</th>
             <th>Name</th>
             <th>Votes</th>
             <th></th>
@@ -26,6 +27,7 @@
     <tbody>
         {% for map in maps: %}
             <tr>
+                <td> <img src="{{config.static_dir}}/img/{{map['image']}}" width=150 height=100> </td>
                 <td>{{map['name']}}</td>
                 <td>{{map['votes']}}</td>
                 <td>
