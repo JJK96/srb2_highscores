@@ -11,15 +11,21 @@ class Map(db.Model):
     name = db.Column(db.String)
     image = db.Column(db.String, default=None)
     votes = db.Column(db.Integer, default=0)
+    in_rotation = db.Column(db.Integer, default=1)
 
     def get_dict(self):
         map = {}
-        for x in ['id', 'name', 'image', 'votes']:
+        for x in ['id', 'name', 'image', 'votes', 'in_rotation']:
             map[x] = self.__dict__[x]
         return map
 
     def __repr__(self):
-        return '{{"id":"{}", "name":"{}", "image":"{}", "votes":"{}"}}'.format(self.id, self.name, self.image, self.votes)
+        return '{{"id":"{}", "name":"{}", "image":"{}", "votes":"{}", "in_rotation":"{}"}}'.format(
+            self.id,
+            self.name,
+            self.image,
+            self.votes,
+            self.in_rotation)
 
 # class for objects from the Highscore table
 class Highscore(db.Model):
@@ -44,10 +50,10 @@ class Highscore(db.Model):
 # class for objects from the voted table
 class Voted(db.Model):
     __tablename__ = "voted"
-    
+
     ip = db.Column(db.String(15), primary_key=True)
     map = db.Column(db.Integer, primary_key=True)
-    
+
     def __repr__(self):
         return "<Voted {}, {}>".format(self.ip, 
                                        self.map)

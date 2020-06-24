@@ -40,8 +40,11 @@ def get_skins():
     return [x.skin for x in skins]
 
 # get all the maps in the database
-def get_maps(id=None):
+# @paran in_rotation: Only return maps that are in rotation
+def get_maps(id=None, in_rotation=True):
     query = db.session.query(Map)
+    if in_rotation:
+        query = query.filter(Map.in_rotation)
     if id:
         query = query.filter(Map.id == id)
         return query.one_or_none()
@@ -229,7 +232,7 @@ def api():
 @api_routes.route('/maps/<id>')
 def maps(id=None):
     # return the maps as json
-    resp = Response(response=str(get_maps(id)), status=200, mimetype="application/json")
+    resp = Response(response=str(get_maps(id, in_rotation=False)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/users

@@ -23,7 +23,7 @@ def highscores_map_skin():
 def home():
     # show the search page
     return render_template('search.html',
-                           maps=get_maps(),
+                           maps=get_maps(in_rotation=False),
                            columns=[x for x in key_to_column.keys()],
                            skins=get_skins(),
                            users=get_users(),

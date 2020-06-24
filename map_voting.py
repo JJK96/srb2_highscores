@@ -6,7 +6,7 @@ map_voting = Blueprint('map_voting', __name__)
 
 @map_voting.route('/')
 def list():
-    query = db.session.query(Map).order_by(Map.votes.desc())
+    query = db.session.query(Map).order_by(Map.votes.desc()).filter(Map.in_rotation)
     maps = query.all()
     return render_template('map_voting.html', maps=maps, config=Config)
 
