@@ -50,9 +50,22 @@ function update_map() {
         var new_value = data.map.id
         if (map_select.value != new_value) {
             map_select.value = new_value
-            submit_form()
+            map_change(map_select)
         }
     })
+}
+
+//Called when map selector is changed
+function map_change(map_select) {
+    var url = new URL(api_url + '/maps/' + map_select.value)
+    fetch(url)
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            update_background(data.image)
+        })
+    submit_form()
 }
 
 function update_sync(checkbox) {

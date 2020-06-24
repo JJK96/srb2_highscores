@@ -21,7 +21,7 @@
                 <label for="map_id">Map</label>
             </td>
             <td>
-                <select id="map_id"  name="map_id"  type="select" onchange="submit_form()">
+                <select id="map_id"  name="map_id"  type="select" onchange="map_change(this)">
                     <option value="">All maps</option>
                 {% for map in maps: %}
                     <option value="{{map.id}}">{{map.name}}</option>
