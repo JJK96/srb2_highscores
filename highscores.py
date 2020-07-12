@@ -33,8 +33,7 @@ def home():
 @highscores.route('/bestskins')
 def best_skins():
     # show the best skins page
-    return render_template('best_skins_or_users.html',
-                           data=get_best_in_data(False),
+    return render_template('best_in_data.html',
                            table_head_param=["Skin", "Best Times"],
                            title="Skins ordered by number of best timed tracks",
                            config=Config)
@@ -43,8 +42,7 @@ def best_skins():
 @highscores.route('/leaderboard')
 def best_users():
     # show the leaderboard page
-    return render_template('best_skins_or_users.html',
-                           data=get_best_in_data(True),
+    return render_template('best_in_data.html',
                            table_head_param=["Player", "Points"],
                            title="Players' leaderboard (following mario kart's scoring system)",
                            config=Config)

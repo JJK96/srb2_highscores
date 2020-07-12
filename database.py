@@ -68,3 +68,13 @@ key_to_column = {
     'time_string': Highscore.time_string,
     'datetime': Highscore.datetime
 }
+
+# list of the vanilla skins
+base_skins = [
+    "sonic",
+    "tails",
+    "knuckles",
+    "fang",
+    "amy",
+    "metalsonic"
+]

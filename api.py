@@ -1,4 +1,4 @@
-from database import db, Map, Highscore, key_to_column
+from database import db, Map, Highscore, key_to_column, base_skins
 from flask import Blueprint, request, Response
 from dataclasses import dataclass, field
 import json
@@ -135,7 +135,7 @@ def get_highscores_by_map():
 
 # Gets the best skins or leaderboard of users in the database 
 # returns the leaderboard when arg for_leaderboard is true and the best skins when it's false
-def get_best_in_data(for_leaderboard):
+def get_best_in_data(for_leaderboard, all_skins=False):
     # setup the dictionaries for the storing of the results
     res = {}
     scoring = defaultdict(int)
@@ -165,6 +165,11 @@ def get_best_in_data(for_leaderboard):
         if not for_leaderboard:
             # get the scores
             scores = highscores[map_scores]
+            
+            # if not all the skins are requested and the skin isn't vanilla
+            if not all_skins and not (scores[0][3] in base_skins):
+                # go to the next score
+                continue
             # save the point in the dictionary by the first score's skin
             scoring[scores[0][3]] += 1
         else:
@@ -174,7 +179,11 @@ def get_best_in_data(for_leaderboard):
             place = 0
             # for every score in the map's highscores
             for score in highscores[map_scores]:
-                # increase the place count
+                # if not all the skins are requested and the skin isn't vanilla
+                if not all_skins and not (score[3] in base_skins):
+                    # go to the next score
+                    continue
+
                 place += 1
                 # if 12 scores got counted
                 if place-offset >= 12:
@@ -210,15 +219,20 @@ def api():
             GetParam('limit', 'Set the maximal number of records to return'),
             GetParam('order', 'Order by any of the returned columns', values=[x for x in key_to_column.keys()]),
             GetParam('descending', 'Set the order direction to descending'),
-            GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones')
+            GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
+            GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones')
         ]),
         Endpoint(f'{api_prefix}/highscores', 'Get best scores per map and skin'),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
-        Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players'),
-        Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks'),
+        Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players', [
+            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
+        ]),
+        Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
+            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
+        ]),
         Endpoint(f'{api_prefix}/maphighscores', 'Get the highscores divided by map'),
-        Endpoint(f'{api_prefix}/server_info[/<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
+        Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
         ]
     # return the docs as json
     response = json.dumps({
@@ -252,15 +266,21 @@ def api_skins():
 # when the route is api/leaderboard
 @api_routes.route('/leaderboard')
 def api_leaderboard():
+    # request the params for the skins to be counted
+    all_skins = request.args.get("all_skins") == "on"
+    
     # return the leaderboard as json
-    resp = Response(response=json.dumps(get_best_in_data(True)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_best_in_data(True, all_skins)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
 def api_best_skins():
+    # request the params for the skins to be counted
+    all_skins = request.args.get("all_skins") == "on"
+    
     # return the best skins as json
-    resp = Response(response=json.dumps(get_best_in_data(False)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_best_in_data(False, all_skins)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/maphighscores
@@ -302,6 +322,12 @@ def search():
                                   (Highscore.skin == best_scores.c.skin) & \
                                   (Highscore.map_id == best_scores.c.map_id) & \
                                   (Highscore.time == best_scores.c.time)))
+    
+    # request the params for the skins filtering the scores
+    all_skins = request.args.get("all_skins")
+    
+    if all_skins != "on":
+        query = query.filter(Highscore.skin.in_(base_skins))
                                       
     query = query.filter(Map.id == Highscore.map_id)
     

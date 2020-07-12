@@ -42,7 +42,7 @@ var submit_form = function() {
 
 submit_form()
 
-var synchornisation_timer = null
+var synchronization_timer = null
 
 function update_map() {
     get_server_info(data => {
@@ -72,10 +72,10 @@ function update_sync(checkbox) {
     if (checkbox.checked) {
         update_map()
         //Refresh the page
-        synchornisation_timer = window.setInterval(update_map, server_info_update_delay);
+        synchronization_timer = window.setInterval(update_map, server_info_update_delay);
     } else {
-        window.clearInterval(synchornisation_timer)
-        synchornisation_timer = null
+        window.clearInterval(synchronization_timer)
+        synchronization_timer = null
     }
 }
 
