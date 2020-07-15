@@ -41,7 +41,7 @@ def get_skins():
     return [x.skin for x in skins]
 
 # get all the maps in the database
-# @paran in_rotation: Only return maps that are in rotation
+# @param in_rotation: Only return maps that are in rotation
 def get_maps(id=None, in_rotation=True):
     query = db.session.query(Map)
     if in_rotation:
@@ -357,7 +357,7 @@ def search():
     for key in request.args:
         # if the parameter's key is in the highscores columns
         if key in key_to_column:
-            fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps()], 'skin':get_skins}
+            fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps(in_rotation=False)], 'skin':get_skins}
             # if the column has to be searched through fuzzywuzzy
             try:
                 extracted = process.extractOne(request.args.get(key), fuzzy_columns[key](), scorer=fuzz.ratio)
