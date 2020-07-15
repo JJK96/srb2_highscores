@@ -5,6 +5,7 @@ import json
 from collections import defaultdict
 from srb2_query import SRB2Query
 from config import Config
+from fuzzywuzzy import process, fuzz
 
 # setup the api section of the site
 api_prefix = "/highscores/api"
@@ -203,6 +204,13 @@ def get_best_in_data(for_leaderboard, all_skins=False):
         res[k] = v
     return res
 
+# converter from tics to string
+def tics_to_string(time):
+    minutes = round(time/(60*35))
+    seconds = round(time/35%60)
+    centiseconds = round((time%35) * (100/35))
+    return f"{minutes}:{seconds}.{centiseconds}"
+
 
 # when the route is api/
 @api_routes.route('/')
@@ -349,8 +357,14 @@ def search():
     for key in request.args:
         # if the parameter's key is in the highscores columns
         if key in key_to_column:
-            # filter the highscores by such column
-            query = query.filter(key_to_column[key] == request.args.get(key))
+            fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps()], 'skin':get_skins}
+            # if the column has to be searched through fuzzywuzzy
+            try:
+                extracted = process.extractOne(request.args.get(key), fuzzy_columns[key](), scorer=fuzz.ratio)
+                query = query.filter(key_to_column[key] == extracted[0])
+            except KeyError:
+                # filter the highscores by such column
+                query = query.filter(key_to_column[key] == request.args.get(key))
     
     # request the limit parameter
     limit = request.args.get('limit')
@@ -378,6 +392,7 @@ def get_server_info(ip=Config.srb2_server):
     serverinfo['number_of_players'] = serverpkt.numberofplayer
     serverinfo['max_players'] = serverpkt.maxplayer
     serverinfo['leveltime'] = serverpkt.leveltime
+    serverinfo['leveltime_string'] = tics_to_string(serverpkt.leveltime)
     serverinfo['map'] = get_maps(serverpkt.map['num']-1).get_dict()
     serverinfo['players'] = []
     for player in playerpkt.players:
