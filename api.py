@@ -366,17 +366,7 @@ def search():
                 # filter the highscores by such column
                 query = query.filter(key_to_column[key] == request.args.get(key))
     
-    # request the limit parameter
-    limit = request.args.get('limit')
-    # if the parameter is given
-    if limit:
-        # try to limit the highscores by the limit
-        try:
-            query = query.limit(int(limit))
-        # if the limit isn't a number
-        except ValueError:
-            # don't do anything
-            pass
+    query = query.limit(request.args.get('limit',1000))
         
     # return the query as json
     scores = query.all()
