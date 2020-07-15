@@ -1,11 +1,12 @@
 from database import db, Map, Highscore, key_to_column, base_skins
-from flask import Blueprint, request, Response
+from flask import Blueprint, request, Response, jsonify
 from dataclasses import dataclass, field
 import json
 from collections import defaultdict
 from srb2_query import SRB2Query
 from config import Config
 from fuzzywuzzy import process, fuzz
+from werkzeug.exceptions import HTTPException
 
 # setup the api section of the site
 api_prefix = "/highscores/api"
@@ -365,8 +366,11 @@ def search():
             except KeyError:
                 # filter the highscores by such column
                 query = query.filter(key_to_column[key] == request.args.get(key))
-    
-    query = query.limit(request.args.get('limit',1000))
+
+    try:
+        query = query.limit(int(request.args.get('limit',1000)))
+    except (ValueError, TypeError):
+        return jsonify(error="Invalid limit"), 400
         
     # return the query as json
     scores = query.all()
@@ -398,3 +402,10 @@ def server_info(ip_address):
         default=lambda x: str(x))
     resp = Response(response=response, status=200, mimetype="application/json")
     return resp
+
+@api_routes.errorhandler(Exception)
+def handle_exception(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return jsonify(error=str(e)), code
