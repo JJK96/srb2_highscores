@@ -337,7 +337,14 @@ def get_server_info(ip=Config.srb2_server):
     serverinfo['max_players'] = serverpkt.maxplayer
     serverinfo['leveltime'] = serverpkt.leveltime
     serverinfo['leveltime_string'] = tics_to_string(serverpkt.leveltime)
-    serverinfo['map'] = get_maps(serverpkt.map['num']-1).get_dict()
+    serverinfo['map'] = {
+        'id': serverpkt.map['num'],
+        'name': serverpkt.map['title'],
+    }
+    # Retrieve more map info if it is a known map
+    servermap = get_maps(serverpkt.map['num']-1)
+    if servermap:
+        serverinfo['map'] = servermap.get_dict()
     serverinfo['players'] = []
     for player in playerpkt.players:
         player.pop("address")
