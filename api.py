@@ -288,7 +288,7 @@ def api_search():
     all_skins = request.args.get("all_skins") == "on"
     # request the params for the ordering
     order = request.args.get('order')
-    descending = request.args.get('descending') == "on"
+    descending = 'descending' in request.args
 
     ordering = None
     # if the order param is valid
