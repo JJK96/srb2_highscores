@@ -266,7 +266,7 @@ def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=Fa
 
     query = query.filter(Map.id == Highscore.map_id)
 
-    if ordering:
+    if ordering is not None:
         query = query.order_by(ordering)
 
     for filter in filters:
