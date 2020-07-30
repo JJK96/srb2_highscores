@@ -140,10 +140,10 @@ def get_best_in_data(for_leaderboard, all_skins=False):
 
 # converter from tics to string
 def tics_to_string(time):
-    minutes = round(time/(60*35))
-    seconds = round(time/35%60)
-    centiseconds = round((time%35) * (100/35))
-    return f"{minutes}:{seconds}.{centiseconds}"
+    minutes = time//(60*35)
+    seconds = time//35%60
+    centiseconds = (time%35) * (100//35)
+    return f"{minutes}:"+f"{seconds}".zfill(2)+f".{centiseconds}".zfill(2)
 
 
 # when the route is api/
