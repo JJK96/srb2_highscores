@@ -77,6 +77,7 @@ def get_map_highscores():
                           (Highscore.map_id == best_map.c.map_id) & \
                           (Highscore.time == best_map.c.time))) \
         .filter(Map.id == Highscore.map_id) \
+        .filter(Map.in_rotation) \
         .order_by(Map.id, Highscore.time.asc())
     
     maps = {}
