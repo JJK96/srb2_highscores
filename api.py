@@ -54,7 +54,7 @@ def get_maps(id=None, in_rotation=True):
     return query.all()
 
 # get the best highscores for each skin in each map
-def get_map_highscores():
+def get_map_highscores(all_skins=False):
     # get the best time for each map and skin
     best_map = db.session.query(
         db.func.min(Highscore.time).label("time"),
@@ -79,7 +79,10 @@ def get_map_highscores():
         .filter(Map.id == Highscore.map_id) \
         .filter(Map.in_rotation) \
         .order_by(Map.id, Highscore.time.asc())
-    
+
+    if not all_skins:
+        query = query.filter(Highscore.skin.in_(base_skins))
+
     maps = {}
     
     # for every score in the filtered scores
@@ -174,7 +177,7 @@ def api():
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
         ]),
-        Endpoint(f'{api_prefix}/maphighscores', 'Get the highscores divided by map'),
+        Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map'),
         Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
         ]
     # return the docs as json
@@ -226,11 +229,12 @@ def api_best_skins():
     resp = Response(response=json.dumps(get_best_in_data(False, all_skins)), status=200, mimetype="application/json")
     return resp
 
-# when the route is api/maphighscores
-@api_routes.route('/maphighscores')
+# when the route is api/bestformaps
+@api_routes.route('/bestformaps')
 def api_highscores():
+    all_skins = request.args.get("all_skins") == "on"
     # return the highscores for each skin in each map as json
-    resp = Response(response=json.dumps(get_map_highscores(), default=lambda o: str(o)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
 def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False):

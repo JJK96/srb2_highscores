@@ -15,7 +15,6 @@ def central_hub():
 def highscores_map_skin():
     # show the best for maps page
     return render_template('best_for_maps.html',
-                           highscores=get_map_highscores(),
                            config=Config)
 
 # when the route is /search

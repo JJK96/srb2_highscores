@@ -177,6 +177,10 @@ body {
     cursor:pointer;
 }
 
+#highscores table, #highscores th, #highscores td {
+    border: 1px solid black;
+}
+
 thead {
     font-weight: bold;
 }
