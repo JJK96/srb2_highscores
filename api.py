@@ -179,7 +179,7 @@ def api():
         ]),
         Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map'),
         Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
-        ]
+    ]
     # return the docs as json
     response = json.dumps({
         'endpoints': endpoints

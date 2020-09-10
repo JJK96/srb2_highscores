@@ -1,0 +1,22 @@
+{
+  "name": "highscores",
+  "version": "1.0.0",
+  "description": "Frontend for the data extracted using https://github.com/JJK96/SRB2/tree/speedrun_server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JJK96/srb2_highscores.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JJK96/srb2_highscores/issues"
+  },
+  "homepage": "https://github.com/JJK96/srb2_highscores#readme",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.14.0"
+  }
+}

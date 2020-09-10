@@ -185,6 +185,39 @@ thead {
     font-weight: bold;
 }
 
+.flex_container {
+    display: flex;
+    justify-content: space-around;
+    flex-flow: wrap;
+}
+
+.flex_container > * {
+    flex-shrink: 0;
+    height: 300px;
+    width: 200px;
+}
+
+.flex_container li {
+    list-style: none;
+}
+
+.highscore_button {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    text-decoration: none;
+    color: inherit !important;
+}
+
+.highscore_button .image {
+    height: 70%;
+}
+
+.highscore_button img {
+    width: 100%;
+}
+
 @media (max-width: 768px) {
 	.navbar-burger {
 		display: block;
