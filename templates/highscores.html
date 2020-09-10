@@ -5,13 +5,12 @@
         background-image: url("{{config.static_dir}}/img/highscores.jpg");
     }
 </style>
-<link href="{{config.static_dir}}/css/all.min.css" rel="stylesheet">
 {% endblock %}
 {% block title %}
     <h1>Leaderboards/highscores</h1>
 {% endblock %}
 {% block content %}
-    <div class="flex_container">
+    <div id="highscore_hub" class="flex_container">
         <a href="search" class="highscore_button">
             <div class="image">
                 <i class="fa fa-search fa-10x"></i>

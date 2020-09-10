@@ -187,11 +187,11 @@ thead {
 
 .flex_container {
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-flow: wrap;
 }
 
-.flex_container > * {
+#highscore_hub > * {
     flex-shrink: 0;
     height: 300px;
     width: 200px;

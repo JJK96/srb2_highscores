@@ -66,6 +66,7 @@ def get_map_highscores(all_skins=False):
     query = db.session.query(
         Map.id.label("map_id"),
         Map.name.label("mapname"),
+        Map.image,
         Highscore.skin,
         Highscore.username,
         Highscore.time,
@@ -91,6 +92,7 @@ def get_map_highscores(all_skins=False):
         map = maps.get(row.map_id, {
             'id': row.map_id,
             'name': row.mapname,
+            'image': row.image,
             'skins': []
         })
         map['skins'].append({
