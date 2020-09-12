@@ -152,6 +152,25 @@ def tics_to_string(time):
     return f"{minutes}:"+f"{seconds}".zfill(2)+f".{centiseconds}".zfill(2)
 
 
+# Returns the maps with the number of times they were played since the given start_date
+# 2020-09-10 was the date the ingame voting system was enabled
+def get_num_plays(start_date="2020-09-10"):
+    subquery = db.session.query(
+        Highscore.map_id,
+        Highscore.datetime) \
+        .filter(Highscore.datetime > start_date).subquery()
+    num_plays = func.count().label("num_plays")
+    query = db.session.query(
+        Map.id,
+        Map.name,
+        Map.image,
+        num_plays) \
+        .select_from(Map, subquery) \
+        .filter(Map.id == subquery.c.map_id) \
+        .group_by(subquery.c.map_id) \
+        .order_by(num_plays.desc())
+    return query.all()
+
 # when the route is api/
 @api_routes.route('/')
 def api():
@@ -180,7 +199,8 @@ def api():
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
         ]),
         Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map'),
-        Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default')
+        Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default'),
+        Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date')
     ]
     # return the docs as json
     response = json.dumps({
@@ -367,9 +387,14 @@ def server_info(ip_address):
     resp = Response(response=response, status=200, mimetype="application/json")
     return resp
 
-@api_routes.errorhandler(Exception)
-def handle_exception(e):
-    code = 500
-    if isinstance(e, HTTPException):
-        code = e.code
-    return jsonify(error=str(e)), code
+@api_routes.route('/num_plays', defaults={'start_date': "2020-09-10"})
+@api_routes.route('/num_plays/<start_date>')
+def num_plays(start_date):
+    return Response(response=to_json(get_num_plays(start_date)), status=200, mimetype="application/json")
+
+# @api_routes.errorhandler(Exception)
+# def handle_exception(e):
+#     code = 500
+#     if isinstance(e, HTTPException):
+#         code = e.code
+#     return jsonify(error=str(e)), code
