@@ -158,7 +158,9 @@ def get_num_plays(start_date="2020-09-10"):
     subquery = db.session.query(
         Highscore.map_id,
         Highscore.datetime) \
-        .filter(Highscore.datetime > start_date).subquery()
+        .filter(Highscore.datetime > start_date) \
+        .distinct() \
+        .subquery()
     num_plays = func.count().label("num_plays")
     query = db.session.query(
         Map.id,
