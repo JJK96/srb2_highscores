@@ -394,9 +394,9 @@ def server_info(ip_address):
 def num_plays(start_date):
     return Response(response=to_json(get_num_plays(start_date)), status=200, mimetype="application/json")
 
-# @api_routes.errorhandler(Exception)
-# def handle_exception(e):
-#     code = 500
-#     if isinstance(e, HTTPException):
-#         code = e.code
-#     return jsonify(error=str(e)), code
+@api_routes.errorhandler(Exception)
+def handle_exception(e):
+    code = 500
+    if isinstance(e, HTTPException):
+        code = e.code
+    return jsonify(error=str(e)), code
