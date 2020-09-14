@@ -54,7 +54,7 @@ def get_maps(id=None, in_rotation=True):
     return query.all()
 
 # get the best highscores for each skin in each map
-def get_map_highscores(all_skins=False):
+def get_map_highscores(all_skins=False, map_id=None):
     # get the best time for each map and skin
     best_map = db.session.query(
         db.func.min(Highscore.time).label("time"),
@@ -83,6 +83,9 @@ def get_map_highscores(all_skins=False):
 
     if not all_skins:
         query = query.filter(Highscore.skin.in_(base_skins))
+
+    if map_id:
+        query = query.filter(Highscore.map_id == map_id)
 
     maps = {}
     
@@ -191,7 +194,6 @@ def api():
             GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
             GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones')
         ]),
-        Endpoint(f'{api_prefix}/highscores', 'Get best scores per map and skin'),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
         Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players', [
@@ -200,7 +202,9 @@ def api():
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
         ]),
-        Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map'),
+        Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map', [
+            GetParam('map_id', 'Search by map id')
+        ]),
         Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default'),
         Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date')
     ]
@@ -257,8 +261,9 @@ def api_best_skins():
 @api_routes.route('/bestformaps')
 def api_highscores():
     all_skins = request.args.get("all_skins") == "on"
+    map_id = request.args.get("map_id")
     # return the highscores for each skin in each map as json
-    resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins), default=lambda o: str(o)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins, map_id=map_id), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
 def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False):
