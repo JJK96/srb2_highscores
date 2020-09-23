@@ -27,6 +27,10 @@ def central_hub():
 def server_info():
     return render_template('server_info.html', config=Config)
 
+@app.route('/github')
+def github():
+    return render_template('github.html', config=Config)
+
 # init the database connector
 db.init_app(app)
 migrate = Migrate(app, db)
