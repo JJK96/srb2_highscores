@@ -181,7 +181,9 @@ def get_num_plays(start_date="2020-09-10"):
 def api():
     # show the docs for every endpoint in the api section
     endpoints = [
-        Endpoint(f'{api_prefix}/maps', 'Return all maps'),
+        Endpoint(f'{api_prefix}/maps', 'Return all maps', [
+            GetParam('in_rotation', 'Get only maps that are in the rotation')
+        ]),
         Endpoint(f'{api_prefix}/maps/<id>', 'Return the specified map'),
         Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending', [
             GetParam('username', 'Search by username'),
@@ -219,8 +221,9 @@ def api():
 @api_routes.route('/maps')
 @api_routes.route('/maps/<id>')
 def maps(id=None):
+    in_rotation = request.args.get("in_rotation") is not None
     # return the maps as json
-    resp = Response(response=str(get_maps(id, in_rotation=False)), status=200, mimetype="application/json")
+    resp = Response(response=str(get_maps(id, in_rotation=in_rotation)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/users
