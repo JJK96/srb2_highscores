@@ -177,6 +177,39 @@ def get_num_plays(start_date="2020-09-10"):
         .order_by(num_plays.desc())
     return query.all()
 
+# Returns how much records are set on specific days of the week, hours, etc.
+def get_time_stats(day=True, hour=False):
+    if not day and not hour:
+        # This is not a useful query, transform it
+        day = True
+    columns = []
+    if day:
+        columns.append(func.dayname(Highscore.datetime).label("day"))
+    if hour:
+        columns.append(func.hour(Highscore.datetime).label("hour"))
+    columns.append(func.count().label("num_scores"))
+
+    query = db.session.query(*columns) \
+        .filter(Highscore.datetime) \
+
+    if day:
+        query = query.group_by("day").order_by("day")
+    if hour:
+        query = query.group_by("hour").order_by("hour")
+
+    output = {}
+    for row in query.all():
+        if day and hour:
+            d = output.get(row.day, {})
+            d[row.hour] = row.num_scores
+            output[row.day] = d
+        elif day:
+            output[row.day] = row.num_scores
+        elif hour:
+            output[row.hour] = row.num_scores
+
+    return output
+
 fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps(in_rotation=False)], 'skin':get_skins}
 # if the column has to be searched through fuzzywuzzy
 
@@ -222,7 +255,11 @@ def api():
             GetParam('map_id', 'Search by map id')
         ]),
         Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default'),
-        Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date')
+        Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date'),
+        Endpoint(f'{api_prefix}/time_stats', 'Get the number of records grouped based on the arguments', [
+            GetParam('day', 'Group by day of the week'),
+            GetParam('hour', 'Group by hour of the day'),
+        ]),
     ]
     # return the docs as json
     response = json.dumps({
@@ -420,6 +457,17 @@ def server_info(ip_address):
 @api_routes.route('/num_plays/<start_date>')
 def num_plays(start_date):
     return Response(response=to_json(get_num_plays(start_date)), status=200, mimetype="application/json")
+
+@api_routes.route('/time_stats')
+def time_stats():
+    day = "day" in request.args
+    hour = "hour" in request.args
+
+    response = json.dumps(
+        get_time_stats(day, hour),
+        default=lambda x: str(x)
+    )
+    return Response(response=response, status=200, mimetype="application/json")
 
 @api_routes.errorhandler(Exception)
 def handle_exception(e):
