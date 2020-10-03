@@ -208,7 +208,7 @@ def api():
             GetParam('descending', 'Set the order direction to descending'),
             GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
             GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones'),
-            GetParam('no_fuzzy', 'Set to "on" to disable fuzzy matching')
+            GetParam('fuzzy', 'Set to "off" to disable fuzzy matching')
         ]),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
@@ -339,7 +339,7 @@ def api_search():
     all_skins = request.args.get("all_skins") == "on"
     # request the params for the ordering
     order = request.args.get('order')
-    no_fuzzy = request.args.get('no_fuzzy') == "on"
+    no_fuzzy = request.args.get('fuzzy') == "off"
     descending = 'descending' in request.args
 
     ordering = None
