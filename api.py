@@ -2,6 +2,7 @@ from database import db, Map, Highscore, key_to_column, base_skins
 from flask import Blueprint, request, Response, jsonify
 from dataclasses import dataclass, field
 import json
+from json.decoder import JSONDecodeError
 from collections import defaultdict
 from srb2_query import SRB2Query
 from config import Config
@@ -176,6 +177,18 @@ def get_num_plays(start_date="2020-09-10"):
         .order_by(num_plays.desc())
     return query.all()
 
+fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps(in_rotation=False)], 'skin':get_skins}
+# if the column has to be searched through fuzzywuzzy
+
+def get_fuzzy(key, value):
+    try:
+        extracted = process.extractOne(value, fuzzy_columns[key](), scorer=fuzz.ratio)
+        return extracted[0]
+    except KeyError:
+        # filter the highscores by such column
+        return value
+
+
 # when the route is api/
 @api_routes.route('/')
 def api():
@@ -185,7 +198,7 @@ def api():
             GetParam('in_rotation', 'Get only maps that are in the rotation')
         ]),
         Endpoint(f'{api_prefix}/maps/<id>', 'Return the specified map'),
-        Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending', [
+        Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending. All get parameters can also be given as a json list of values e.g. map_id=[1,2]', [
             GetParam('username', 'Search by username'),
             GetParam('mapname', 'Search by map name'),
             GetParam('map_id', 'Search by map id'),
@@ -194,7 +207,8 @@ def api():
             GetParam('order', 'Order by any of the returned columns', values=[x for x in key_to_column.keys()]),
             GetParam('descending', 'Set the order direction to descending'),
             GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
-            GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones')
+            GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones'),
+            GetParam('no_fuzzy', 'Set to "on" to disable fuzzy matching')
         ]),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
@@ -325,6 +339,7 @@ def api_search():
     all_skins = request.args.get("all_skins") == "on"
     # request the params for the ordering
     order = request.args.get('order')
+    no_fuzzy = request.args.get('no_fuzzy') == "on"
     descending = 'descending' in request.args
 
     ordering = None
@@ -343,14 +358,18 @@ def api_search():
     for key in request.args:
         # if the parameter's key is in the highscores columns
         if key in key_to_column:
-            fuzzy_columns = {'username':get_users, 'mapname':lambda:[map.name for map in get_maps(in_rotation=False)], 'skin':get_skins}
-            # if the column has to be searched through fuzzywuzzy
+            value = request.args.get(key)
+            column = key_to_column[key]
             try:
-                extracted = process.extractOne(request.args.get(key), fuzzy_columns[key](), scorer=fuzz.ratio)
-                filters.append(key_to_column[key] == extracted[0])
-            except KeyError:
-                # filter the highscores by such column
-                filters.append(key_to_column[key] == request.args.get(key))
+                values = json.loads(value)
+                assert isinstance(values, list)
+                if not no_fuzzy:
+                    values = [get_fuzzy(key, value) for value in values]
+                filters.append(column.in_(values))
+            except (JSONDecodeError, AssertionError):
+                if not no_fuzzy:
+                    value = get_fuzzy(key, value)
+                filters.append(column == value)
 
     limit = request.args.get('limit',None)
     if limit:
