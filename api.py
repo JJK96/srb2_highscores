@@ -430,6 +430,7 @@ def get_server_info(ip=Config.srb2_server):
     serverinfo['max_players'] = serverpkt.maxplayer
     serverinfo['leveltime'] = serverpkt.leveltime
     serverinfo['leveltime_string'] = tics_to_string(serverpkt.leveltime)
+    serverinfo['filesneeded'] = serverpkt.filesneeded
     serverinfo['map'] = {
         'id': serverpkt.map['num'],
         'name': serverpkt.map['title'],
