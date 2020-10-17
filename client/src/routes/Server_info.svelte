@@ -56,7 +56,7 @@
             </ul>
         </div>
     {:else}
-        Loading...
+        <h2>Loading...</h2>
     {/if}
 </Page>
 
