@@ -35,5 +35,9 @@
 </table>
 {% endblock %}
 {% block scripts %}
+{% if page == "leaderboard" %}
+<script src="{{config.static_dir}}/js/leaderboard.js"></script>
+{% else %}
 <script src="{{config.static_dir}}/js/best_in_data.js"></script>
+{% endif %}
 {% endblock %}

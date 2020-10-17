@@ -124,10 +124,9 @@ def get_best_skins(all_skins=False):
     return res
 
 # Gets the leaderboard of users in the database 
-def get_leaderboard(all_skins=False, per_skin=True):
+def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False):
     # setup the dictionaries for the storing of the results
-    res = {}
-    scoring = defaultdict(int)
+    scoring = {}
     
     # setup the weights for the leaderboard(mariokart's scoring system)
     weights = {
@@ -149,12 +148,25 @@ def get_leaderboard(all_skins=False, per_skin=True):
         scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins, per_skin=per_skin)
         # for every score in the map's highscores
         for place, score in enumerate(scores):
+            username = score.username
+            place = place+1
             # add increase the points in the dictionary by the username
-            scoring[score.username] += weights.get(place+1, 0)
+            user = scoring.get(username, {
+                'username': username,
+                'total': 0
+            })
+            points = weights.get(place, 0)
+            if include_calculation:
+                score = score._asdict()
+                score['place'] = place
+                score['points'] = points
+                if 'scores' not in user:
+                    user['scores'] = []
+                user['scores'].append(score)
+            user['total'] += points
+            scoring[username] = user
     # sort the dictionary by most points
-    for k, v in sorted(scoring.items(), key=lambda x: x[1], reverse=True):
-        res[k] = v
-    return res
+    return sorted(scoring.values(), key=lambda x: x['total'], reverse=True)
 
 # converter from tics to string
 def tics_to_string(time):
@@ -257,6 +269,7 @@ def api():
         Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones'),
             GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
+            GetParam('include_scores', 'Add this parameter to include all scores that contributed to the calculation'),
         ]),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
@@ -307,10 +320,10 @@ def api_leaderboard():
     # request the params for the skins to be counted
     all_skins = request.args.get("all_skins") == "on"
     per_skin = request.args.get("per_skin") != "off"
+    include_calculation = "include_calculation" in request.args
    
     # return the leaderboard as json
-    resp = Response(response=json.dumps(get_leaderboard(all_skins=all_skins, per_skin=per_skin)), status=200, mimetype="application/json")
-    return resp
+    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation))
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
