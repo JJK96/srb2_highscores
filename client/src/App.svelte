@@ -33,8 +33,8 @@
                 <a href="/server_info" class="navbar-menu-link">Server info</a>
                 <a href="/highscores" id="i64ju" class="navbar-menu-link">Highscores</a>
                 <a href="/map_voting" id="ihy3g" class="navbar-menu-link">Map voting</a>
-                <a href="https://discord.gg/wNwg9vk" id="i1g6j" class="navbar-menu-link" native><i class="fab fa-discord"></i> Discord</a>
-                <a href="/highscores/api" class="navbar-menu-link" native>API</a>
+                <a href="https://discord.gg/wNwg9vk" id="i1g6j" class="navbar-menu-link" noroute><i class="fab fa-discord"></i> Discord</a>
+                <a href="/highscores/api" class="navbar-menu-link" noroute>API</a>
                 <a href="/github" class="navbar-menu-link"><i class="fab fa-github"></i> Github</a>
             </nav>
         </div>

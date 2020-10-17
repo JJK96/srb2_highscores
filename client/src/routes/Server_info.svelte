@@ -35,7 +35,7 @@
                 <tbody>
                     {#each data.players as player}
                     <tr>
-                        <td>{player.username}</td>
+                        <td>{player.name}</td>
                         <td>{player.skin}</td>
                     </tr>
                     {/each}
