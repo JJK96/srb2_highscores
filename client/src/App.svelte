@@ -6,10 +6,10 @@
     import Highscores from "./routes/Highscores.svelte";
     import MapVoting from "./routes/Map_voting.svelte";
     import Github from "./routes/Github.svelte";
-
-    let api_url = window.location.protocol + "//" + window.location.host + '/highscores/api'
-
-    let server_info_update_delay = 10000
+    import Search from "./routes/Search.svelte";
+    import BestForMaps from "./routes/Best_for_maps.svelte";
+    import BestSkins from "./routes/Best_skins.svelte";
+    import Leaderboard from "./routes/Leaderboard.svelte";
 
     function toggle_menu(event) {
         let items = document.getElementById("navbar-items");
@@ -44,6 +44,10 @@
     <Route path="/"><Index /></Route>
     <Route path="/server_info"><ServerInfo /></Route>
     <Route path="/highscores"><Highscores /></Route>
+    <Route path="/highscores/search"><Search /></Route>
+    <Route path="/highscores/bestformaps"><BestForMaps /></Route>
+    <Route path="/highscores/bestskins"><BestSkins /></Route>
+    <Route path="/highscores/leaderboard"><Leaderboard /></Route>
     <Route path="/map_voting"><MapVoting /></Route>
     <Route path="/github"><Github /></Route>
     <Route path=""><Error /></Route>

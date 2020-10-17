@@ -1,37 +1,57 @@
 <script>
     import Page from "./Page.svelte";
+    import { api_url, server_info_update_delay } from "../config.js";
+    import { get_server_info, update_background } from "../server_info.js";
 
-    let srb2_server = "srb2circuit.eu"
+    let data;
+    let server_ip = "srb2circuit.eu";
+
+    function update_info_page() {
+        get_server_info(d => {
+            data = d
+            update_background(data.map.image)
+        })
+    }
+
+    update_info_page()
+    //Refresh the page
+    window.setInterval(update_info_page, server_info_update_delay);
 </script>
+
 <Page>
-    <h1 id="server_name"></h1>
-    <h2>IP address/hostname: {srb2_server}</h2>
-    <label>Current map</label>: <span id="map_title"></span>
-    <div class="server_info_players">
-        <h2>Online players</h2>
-        <table border=1>
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Skin</td>
-                </tr>
-            </thead>
-            <tbody id="players_table">
-            </tbody>
-        </table>
-        <h2>Mods</h2>
-        <ul id="files_list">
-        </ul>
-    </div>
+    {#if data}
+        <h1 id="server_name">{data.servername}</h1>
+        <h2>IP address/hostname: {server_ip}</h2>
+        <label>Current map</label>: <span id="map_title">{data.map.name}</span>
+        <div class="server_info_players">
+            <h2>Online players</h2>
+            <table border=1>
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Skin</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each data.players as player}
+                    <tr>
+                        <td>{player.username}</td>
+                        <td>{player.skin}</td>
+                    </tr>
+                    {/each}
+                </tbody>
+            </table>
+            <h2>Mods</h2>
+            <ul id="files_list">
+                {#each data.filesneeded as file}
+                    <li>{file.name}</li>
+                {/each}
+            </ul>
+        </div>
+    {:else}
+        Loading...
+    {/if}
 </Page>
-
-<!--<script src="{{config.static_dir}}/js/server_info.js"></script>-->
-<!--<script>
-update_info_page()
-
-//Refresh the page
-window.setInterval(update_info_page, server_info_update_delay);
-</script>-->
 
 <style>
     :global(body) {
