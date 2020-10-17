@@ -10,3 +10,10 @@ export const add_params = (url, form) => {
     })
     return url
 }
+
+export function update_background(image) {
+    if (image && image != "None") {
+        document.body.style.backgroundImage = "url('/img/" + image + "')"
+    }
+}
+

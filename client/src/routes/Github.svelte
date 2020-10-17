@@ -1,5 +1,8 @@
 <script>
     import Page from "./Page.svelte";
+    import { update_background } from "../util.js";
+
+    update_background("Rainbow_Dash_2.jpg");
 </script>
 
 <Page>
@@ -14,9 +17,3 @@
         <li><a href="https://github.com/JJK96/SRB2/tree/speedrun_server/src/luascripts">Lua scripts</a></li>
     </ul>
 </Page>
-
-<style>
-    :global(body) {
-        background-image: url("/img/Rainbow_Dash_2.jpg");
-    }
-</style>

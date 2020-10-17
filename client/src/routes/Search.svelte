@@ -4,7 +4,8 @@
     import { onDestroy } from "svelte";
     import { get_maps } from "../api.js";
     import { api_url, server_info_update_delay } from "../config.js";
-    import { get_server_info, update_background } from "../server_info.js";
+    import { get_server_info } from "../server_info.js";
+    import { update_background } from "../util.js";
 
     location.search
         .substr(1)
@@ -53,8 +54,6 @@
     }
 
 
-    var synchronization_timer = null
-
     //Called when map selector is changed
     function map_change() {
         var url = new URL(api_url + '/maps/' + form.map_id)
@@ -77,6 +76,8 @@
         })
     }
 
+    let synchronization_timer = null
+
     function update_sync(e) {
         let checkbox = e.target
         if (checkbox.checked) {
@@ -98,9 +99,19 @@
             .then(data => skins = data)
     }
 
+    function get_users() {
+        var url = new URL(api_url + '/users')
+        fetch(url)
+            .then(response => {
+                return response.json()
+            })
+            .then(data => users = data)
+    }
+
     get_skins()
     get_maps().then(data => maps = data)
     submit_form()
+    get_users()
 
     onDestroy(async () => {
         window.clearInterval(synchronization_timer)
@@ -119,7 +130,7 @@
                 <td>
                     <input bind:value={form.username} id="username" list="users" name="username" type="text" />
                     <datalist id="users">
-                        {#each users as users}
+                        {#each users as user}
                             <option value="{user}">{user}</option>
                         {/each}
                     </datalist>

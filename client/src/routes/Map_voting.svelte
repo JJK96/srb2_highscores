@@ -1,6 +1,7 @@
 <script>
     import Page from "./Page.svelte";
     import { get_maps } from "../api.js";
+    import { update_background } from "../util.js";
 
     let maps = []
 
@@ -23,6 +24,8 @@
     }
 
     get_maps().then(data => maps = data)
+
+    update_background("map_voting.jpg");
 </script>
 
 <Page>
@@ -53,9 +56,3 @@
         </tbody>
     </table>
 </Page>
-
-<style>
-    :global(body) {
-        background-image: url("/img/map_voting.jpg");
-    }
-</style>

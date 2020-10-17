@@ -11,10 +11,3 @@ export function get_server_info(callback) {
             callback(data)
         })
 }
-
-export function update_background(image) {
-    if (image && image != "None") {
-        document.body.style.backgroundImage = "url('/img/" + image + "')"
-    }
-}
-

@@ -2,7 +2,8 @@
     import Page from "./Page.svelte";
     import { onDestroy } from "svelte";
     import { api_url, server_info_update_delay } from "../config.js";
-    import { get_server_info, update_background } from "../server_info.js";
+    import { get_server_info } from "../server_info.js";
+    import { update_background } from "../util.js";
 
     let data;
     let server_ip = "srb2circuit.eu";
@@ -21,6 +22,7 @@
     onDestroy(async () => {
         window.clearInterval(synchronization_timer)
     })
+    update_background("/img/burning_sands.jpg")
 </script>
 
 <Page>
@@ -59,9 +61,6 @@
 </Page>
 
 <style>
-    :global(body) {
-        background-image: url("/img/burning_sands.jpg");
-    }
     label {
         font-weight: bold
     }

@@ -2,8 +2,10 @@
     import {links} from "svelte-routing";
     import Page from "./Page.svelte";
     import Title from "../highscores/Title.svelte";
+    import { update_background } from "../util.js";
 
     let location = "/highscores"
+    update_background("highscores.jpg");
 </script>
 
 <Page>
@@ -35,9 +37,3 @@
         </a>
     </div>
 </Page>
-
-<style>
-    :global(body) {
-        background-image: url("/img/highscores.jpg");
-    }
-</style>
