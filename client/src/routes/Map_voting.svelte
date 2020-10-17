@@ -1,6 +1,28 @@
-<!--<script src="{{config.static_dir}}/js/map_voting.js"></script>-->
 <script>
     import Page from "./Page.svelte";
+    import { get_maps } from "../api.js";
+
+    let maps = []
+
+    function vote(map, up) {
+        const formData = new FormData();
+        formData.append('map', map);
+        formData.append('up', up);
+        fetch('/map_voting/vote', {
+            method: 'POST',
+            body: formData
+        }).then((response) => {
+            if (response.status != 200) {
+                response.text().then((text) => {
+                    alert(text);
+                })
+            } else {
+                get_maps().then(data => maps = data)
+            }
+        })
+    }
+
+    get_maps().then(data => maps = data)
 </script>
 
 <Page>
@@ -15,20 +37,20 @@
                 <th></th>
             </tr>
         </thead>
-        <!--<tbody>
-            {% for map in maps: %}
+        <tbody>
+            {#each maps as map}
                 <tr>
-                    <td> <img src="{{config.static_dir}}/img/{{map['image']}}" width=150 height=100> </td>
-                    <td>{{map['name']}}</td>
-                    <td>{{map['votes']}}</td>
+                    <td> <img alt={map.name} src="/img/{map.image}" width=150 height=100> </td>
+                    <td>{map.name}</td>
+                    <td>{map.votes}</td>
                     <td>
-                        <i class="fa fa-arrow-up clickable" onclick="vote({{map['id']}}, true)"></i>
+                        <a href="#" on:click={() => vote(map.id, true)}><i class="fa fa-arrow-up" ></i></a>
                         &nbsp;
-                        <i class="fa fa-arrow-down clickable" onclick="vote({{map['id']}}, false)"></i>
+                        <a href="#" on:click={() => vote(map.id, false)}><i class="fa fa-arrow-down" ></i></a>
                     </td>
                 </tr>
-            {% endfor %}
-        </tbody>-->
+            {/each}
+        </tbody>
     </table>
 </Page>
 

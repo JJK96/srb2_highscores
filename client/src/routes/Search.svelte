@@ -1,6 +1,7 @@
 <script>
     import Page from "./Page.svelte";
     import Title from "../highscores/Title.svelte";
+    import { get_maps } from "../api.js";
     import { api_url, server_info_update_delay } from "../config.js";
     import { get_server_info, update_background } from "../server_info.js";
 
@@ -96,17 +97,8 @@
             .then(data => skins = data)
     }
 
-    function get_maps() {
-        var url = new URL(api_url + '/maps')
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => maps = data)
-    }
-
     get_skins()
-    get_maps()
+    get_maps().then(data => maps = data)
     submit_form()
 
 </script>

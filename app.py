@@ -15,6 +15,7 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{username}:{password}@{host}/{database}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.register_blueprint(api_routes, url_prefix=api_prefix)
+app.register_blueprint(map_voting, url_prefix=map_voting_prefix)
 
 # Path for all the static files (compiled JS/CSS, etc.)
 @app.route("/<path:path>")
