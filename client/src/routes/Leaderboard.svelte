@@ -1,6 +1,5 @@
 <script>
-    import Page from "./Page.svelte";
-    import Title from "../highscores/Title.svelte";
+    import Page from "../highscores/Page.svelte";
     import { api_url } from "../config.js";
     import { add_params } from "../util.js";
 
@@ -33,7 +32,6 @@
 </script>
 
 <Page>
-    <Title />
     <h2>Players' leaderboard (following mario kart's scoring system)</h2>
     <form id="best_in_data_form" action="/api" on:change={submit_form}>
         <table>

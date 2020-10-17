@@ -1,7 +1,6 @@
 <script>
     import {links} from "svelte-routing";
-    import Page from "./Page.svelte";
-    import Title from "../highscores/Title.svelte";
+    import Page from "../highscores/Page.svelte";
     import { update_background } from "../util.js";
 
     let location = "/highscores"
@@ -9,7 +8,6 @@
 </script>
 
 <Page>
-    <Title />
     <div id="highscore_hub" class="flex_container" use:links>
         <a href="{location}/search" class="highscore_button">
             <div class="image">

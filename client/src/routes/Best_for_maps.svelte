@@ -1,6 +1,5 @@
 <script>
-    import Page from "./Page.svelte";
-    import Title from "../highscores/Title.svelte";
+    import Page from "../highscores/Page.svelte";
     import { api_url } from "../config.js";
 
     let form = {}
@@ -28,7 +27,6 @@
 </script>
 
 <Page>
-    <Title />
     <h2>For map and skin</h2>
     <form id="best_for_maps_form" on:change={submit_form}>
         <table>

@@ -1,6 +1,5 @@
 <script>
-    import Page from "./Page.svelte";
-    import Title from "../highscores/Title.svelte";
+    import Page from "../highscores/Page.svelte";
     import { onDestroy } from "svelte";
     import { get_maps } from "../api.js";
     import { api_url, server_info_update_delay } from "../config.js";
@@ -64,7 +63,6 @@
             .then(data => {
                 update_background(data.image)
             })
-        submit_form()
     }
 
     function update_map() {
@@ -120,7 +118,6 @@
 </script>
 
 <Page>
-    <Title />
     <form id="highscores_form" action="/api" on:submit|preventDefault={submit_form} on:change={submit_form}>
         <table>
             <tr>
@@ -141,7 +138,7 @@
                     <label for="map_id">Map</label>
                 </td>
                 <td>
-                    <select bind:value={form.map_id} id="map_id"  name="map_id"  type="select" on:blur={map_change}>
+                    <select bind:value={form.map_id} id="map_id"  name="map_id"  type="select" on:change={map_change}>
                         <option value="" selected>All maps</option>
                         {#each maps as map}
                             <option value={map.id} selected={form.map_id == map.id}>{map.name}</option>
