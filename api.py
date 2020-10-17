@@ -124,7 +124,7 @@ def get_best_skins(all_skins=False):
     return res
 
 # Gets the leaderboard of users in the database 
-def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False):
+def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, username=None):
     # setup the dictionaries for the storing of the results
     scoring = {}
     
@@ -148,11 +148,13 @@ def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False):
         scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins, per_skin=per_skin)
         # for every score in the map's highscores
         for place, score in enumerate(scores):
-            username = score.username
+            score_username = score.username
+            if username and score_username != username:
+                continue
             place = place+1
             # add increase the points in the dictionary by the username
-            user = scoring.get(username, {
-                'username': username,
+            user = scoring.get(score_username, {
+                'username': score_username,
                 'total': 0
             })
             points = weights.get(place, 0)
@@ -164,7 +166,7 @@ def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False):
                     user['scores'] = []
                 user['scores'].append(score)
             user['total'] += points
-            scoring[username] = user
+            scoring[score_username] = user
     # sort the dictionary by most points
     return sorted(scoring.values(), key=lambda x: x['total'], reverse=True)
 
@@ -270,6 +272,7 @@ def api():
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones'),
             GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
             GetParam('include_scores', 'Add this parameter to include all scores that contributed to the calculation'),
+            GetParam('username', 'Get only the scores of the given username'),
         ]),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
@@ -321,9 +324,10 @@ def api_leaderboard():
     all_skins = request.args.get("all_skins") == "on"
     per_skin = request.args.get("per_skin") != "off"
     include_calculation = "include_calculation" in request.args
+    username = request.args.get("username", None)
    
     # return the leaderboard as json
-    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation))
+    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username))
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
