@@ -1,14 +1,7 @@
-from flask import render_template, request, Blueprint
+from flask import request, Blueprint
 from database import db, Map, Voted
-from config import Config
 
 map_voting = Blueprint('map_voting', __name__)
-
-@map_voting.route('/')
-def list():
-    query = db.session.query(Map).order_by(Map.votes.desc()).filter(Map.in_rotation)
-    maps = query.all()
-    return render_template('map_voting.html', maps=maps, config=Config)
 
 @map_voting.route('/vote', methods = ['POST'])
 def vote():

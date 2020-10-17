@@ -26,7 +26,13 @@ password = "<database_password>"
 host = "<database_hostname>"
 database = "<database_name>"
 ```
-4. `python app.py`
+4. Build front-end
+```
+cd client
+npm install
+npm run dev
+```
+5. `python app.py`
 
 Alternatively [wsgi](wsgi.org) can be used to run it in combination with an HTTP server.
 

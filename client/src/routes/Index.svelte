@@ -1,21 +1,9 @@
-{% extends "base.html" %}
-{% block stylesheets %}
-<style>
-    body {
-        background-image: url("{{config.static_dir}}/img/home.jpg");
-    }
-    #iwidy {
-    	background-image: url("{{config.static_dir}}/img/burning_sands.jpg");
-	}
-    #i6nx {
-    	background-image: linear-gradient(rgba(0, 0, 0, 0.47), rgba(0, 0, 0, 0.47)), url("{{config.static_dir}}/img/race_alley.jpg");
-	}
-	#discord_server {
-	    background-image: url("{{config.static_dir}}/img/black_core.jpg");
-    }
-</style>
-{% endblock %}
-{% block body %}
+<script>
+    import { update_background } from "../util.js";
+
+    update_background("home.jpg");
+</script>
+
 <section id="i6nx" class="bdg-sect">
 <div id="iofq">
     Sonic Robo Blast 2
@@ -47,4 +35,15 @@ the map's specs.</p>
 A doom-based sonic fangame. Have a look at <a id="srb2_link" class="link_background" href="https://srb2.org">srb2.org</a>
 </div>
 </section>
-{% endblock %}
+
+<style>
+    #iwidy {
+    	background-image: url("/img/burning_sands.jpg");
+	}
+    #i6nx {
+    	background-image: linear-gradient(rgba(0, 0, 0, 0.47), rgba(0, 0, 0, 0.47)), url("/img/race_alley.jpg");
+	}
+	#discord_server {
+	    background-image: url("/img/black_core.jpg");
+    }
+</style>
