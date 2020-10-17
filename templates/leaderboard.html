@@ -1,6 +1,6 @@
 {% extends "highscores.html" %}
 {% block content %}
-<h2>{{title}}</h2>
+<h2>Players' leaderboard (following mario kart's scoring system)</h2>
 <form id="best_in_data_form" action="/api">
     <table>
         <tr>
@@ -11,7 +11,6 @@
                 <input type="checkbox" id="all_skins" name="all_skins" onchange="submit_form()"></input>
             </td>
         </tr>
-        {% if page == "leaderboard": %}
         <tr>
             <td>
                 <label for="per_skin">One score per user per map</label>
@@ -20,14 +19,13 @@
                 <input type="checkbox" id="per_skin" name="per_skin" onchange="submit_form()" value="off"></input>
             </td>
         </tr>
-        {% endif %}
     </table>
 </form>
 <table border=1>
     <thead>
         <tr>            
-            <th>{{table_head_param[0]}}</th>
-            <th>{{table_head_param[1]}}</th>
+            <th>Player</th>
+            <th>Points</th>
         </tr>
     </thead>
     <tbody id="best_in_data_table">
@@ -35,9 +33,6 @@
 </table>
 {% endblock %}
 {% block scripts %}
-{% if page == "leaderboard" %}
 <script src="{{config.static_dir}}/js/leaderboard.js"></script>
-{% else %}
 <script src="{{config.static_dir}}/js/best_in_data.js"></script>
-{% endif %}
 {% endblock %}
