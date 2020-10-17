@@ -8,7 +8,7 @@ from srb2_query import SRB2Query
 from config import Config
 from fuzzywuzzy import process, fuzz
 from werkzeug.exceptions import HTTPException
-from sqlalchemy import func
+from sqlalchemy import func, and_
 
 # setup the api section of the site
 api_prefix = "/highscores/api"
@@ -241,6 +241,7 @@ def api():
             GetParam('descending', 'Set the order direction to descending'),
             GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
             GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones'),
+            GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
             GetParam('fuzzy', 'Set to "off" to disable fuzzy matching')
         ]),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
@@ -296,7 +297,9 @@ def api_skins():
 def api_leaderboard():
     # request the params for the skins to be counted
     all_skins = request.args.get("all_skins") == "on"
-    
+
+    skin_independent = request.args.get("skin_independent") == "on"
+   
     # return the leaderboard as json
     resp = Response(response=json.dumps(get_best_in_data(True, all_skins)), status=200, mimetype="application/json")
     return resp
@@ -320,18 +323,10 @@ def api_highscores():
     resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins, map_id=map_id), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
-def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False):
+def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False, per_skin=True):
     if not limit:
         limit = 1000
-    # subquery to get the best time for each combination (User, Skin, Map)
-    best_scores = db.session.query(db.func.min(Highscore.time).label("time"),
-                             Highscore.username,
-                             Highscore.skin,
-                             Highscore.map_id) \
-                             .group_by(Highscore.username, 
-                                       Highscore.skin, 
-                                       Highscore.map_id).subquery()
-    
+
     # get the highscores NOT ORDERED
     query = db.session.query(
         Highscore.username,
@@ -343,11 +338,25 @@ def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=Fa
         Highscore.datetime)
 
     if not all_scores:
-        query = query.select_from(Map, db.join(Highscore, best_scores,
-                                  (Highscore.username == best_scores.c.username) & \
-                                  (Highscore.skin == best_scores.c.skin) & \
-                                  (Highscore.map_id == best_scores.c.map_id) & \
-                                  (Highscore.time == best_scores.c.time)))
+        combination_column_names = [
+            "username",
+            "map_id"
+        ]
+        if per_skin:
+            combination_column_names.append("skin")
+        combination_columns = [getattr(Highscore, c) for c in combination_column_names]
+        # subquery to get the best time for each combination e.g. (User, Skin, Map)
+        best_scores = db.session.query(db.func.min(Highscore.time).label("time"),
+                                       *combination_columns) \
+                                .group_by(*combination_columns).subquery()
+        join_filters = [ getattr(Highscore, c) == getattr(best_scores.c, c) for c in combination_column_names]
+        query = query.select_from(
+            Map,
+            db.join(Highscore,
+                    best_scores,
+                    and_(
+                        Highscore.time == best_scores.c.time,
+                        *join_filters)))
 
     if not all_skins:
         query = query.filter(Highscore.skin.in_(base_skins))
@@ -370,13 +379,13 @@ def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=Fa
 # when the route is api/search
 @api_routes.route('/search')
 def api_search():
-    # request the params for the type of scores
     all_scores = request.args.get("all_scores") == "on"
-    # request the params for the skins filtering the scores
     all_skins = request.args.get("all_skins") == "on"
+    per_skin = request.args.get("per_skin") != "off"
+    no_fuzzy = request.args.get('fuzzy') == "off"
+
     # request the params for the ordering
     order = request.args.get('order')
-    no_fuzzy = request.args.get('fuzzy') == "off"
     descending = 'descending' in request.args
 
     ordering = None
@@ -415,7 +424,7 @@ def api_search():
         except (ValueError, TypeError):
             return jsonify(error="Invalid limit"), 400
 
-    scores = search(all_scores=all_scores, all_skins=all_skins, filters=filters, ordering=ordering, limit=limit)
+    scores = search(all_scores=all_scores, all_skins=all_skins, filters=filters, ordering=ordering, limit=limit, per_skin=per_skin)
     # return the query as json
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
     return resp
