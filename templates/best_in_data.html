@@ -11,6 +11,7 @@
                 <input type="checkbox" id="all_skins" name="all_skins" onchange="submit_form()"></input>
             </td>
         </tr>
+        {% if page == "leaderboard": %}
         <tr>
             <td>
                 <label for="per_skin">One score per user per map</label>
@@ -19,6 +20,7 @@
                 <input type="checkbox" id="per_skin" name="per_skin" onchange="submit_form()" value="off"></input>
             </td>
         </tr>
+        {% endif %}
     </table>
 </form>
 <table border=1>

@@ -35,6 +35,7 @@ def best_skins():
     return render_template('best_in_data.html',
                            table_head_param=["Skin", "Best Times"],
                            title="Skins ordered by number of best timed tracks",
+                           page="best_skins",
                            config=Config)
 
 # when the route is /leaderboard
@@ -44,4 +45,5 @@ def best_users():
     return render_template('best_in_data.html',
                            table_head_param=["Player", "Points"],
                            title="Players' leaderboard (following mario kart's scoring system)",
+                           page="leaderboard",
                            config=Config)

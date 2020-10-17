@@ -109,9 +109,22 @@ def get_map_highscores(all_skins=False, map_id=None):
         maps[row.map_id] = map
     return [x for x in maps.values()]
 
-# Gets the best skins or leaderboard of users in the database 
-# returns the leaderboard when arg for_leaderboard is true and the best skins when it's false
-def get_best_in_data(for_leaderboard, all_skins=False, per_skin=True):
+# Gets the best skins in the database 
+def get_best_skins(all_skins=False):
+    scoring = defaultdict(int)
+    # for every map in the highscores
+    for map in get_maps():
+        scores = search(filters=[Highscore.map_id == map.id], limit=1, all_skins=all_skins)
+        scoring[scores[0].skin] += 1
+
+    res = {}
+    # sort the dictionary by most points
+    for k, v in sorted(scoring.items(), key=lambda x: x[1], reverse=True):
+        res[k] = v
+    return res
+
+# Gets the leaderboard of users in the database 
+def get_leaderboard(all_skins=False, per_skin=True):
     # setup the dictionaries for the storing of the results
     res = {}
     scoring = defaultdict(int)
@@ -134,15 +147,10 @@ def get_best_in_data(for_leaderboard, all_skins=False, per_skin=True):
     # for every map in the highscores
     for map in get_maps():
         scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins, per_skin=per_skin)
-        # if must return the best skins
-        if for_leaderboard:
-            # for every score in the map's highscores
-            for place, score in enumerate(scores):
-                # add increase the points in the dictionary by the username
-                scoring[score.username] += weights.get(place+1, 0)
-        else:
-            # save the point in the dictionary by the first score's skin
-            scoring[scores[0].skin] += 1
+        # for every score in the map's highscores
+        for place, score in enumerate(scores):
+            # add increase the points in the dictionary by the username
+            scoring[score.username] += weights.get(place+1, 0)
     # sort the dictionary by most points
     for k, v in sorted(scoring.items(), key=lambda x: x[1], reverse=True):
         res[k] = v
@@ -301,7 +309,7 @@ def api_leaderboard():
     per_skin = request.args.get("per_skin") != "off"
    
     # return the leaderboard as json
-    resp = Response(response=json.dumps(get_best_in_data(True, all_skins, per_skin=per_skin)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_leaderboard(all_skins=all_skins, per_skin=per_skin)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/bestskins
@@ -311,7 +319,7 @@ def api_best_skins():
     all_skins = request.args.get("all_skins") == "on"
     
     # return the best skins as json
-    resp = Response(response=json.dumps(get_best_in_data(False, all_skins)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_best_skins(all_skins=all_skins)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/bestformaps
