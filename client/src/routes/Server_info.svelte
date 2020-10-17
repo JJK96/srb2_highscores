@@ -1,5 +1,6 @@
 <script>
     import Page from "./Page.svelte";
+    import { onDestroy } from "svelte";
     import { api_url, server_info_update_delay } from "../config.js";
     import { get_server_info, update_background } from "../server_info.js";
 
@@ -15,7 +16,11 @@
 
     update_info_page()
     //Refresh the page
-    window.setInterval(update_info_page, server_info_update_delay);
+    let synchronization_timer = window.setInterval(update_info_page, server_info_update_delay);
+
+    onDestroy(async () => {
+        window.clearInterval(synchronization_timer)
+    })
 </script>
 
 <Page>

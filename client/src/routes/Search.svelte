@@ -1,6 +1,7 @@
 <script>
     import Page from "./Page.svelte";
     import Title from "../highscores/Title.svelte";
+    import { onDestroy } from "svelte";
     import { get_maps } from "../api.js";
     import { api_url, server_info_update_delay } from "../config.js";
     import { get_server_info, update_background } from "../server_info.js";
@@ -100,6 +101,10 @@
     get_skins()
     get_maps().then(data => maps = data)
     submit_form()
+
+    onDestroy(async () => {
+        window.clearInterval(synchronization_timer)
+    })
 
 </script>
 
