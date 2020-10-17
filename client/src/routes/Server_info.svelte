@@ -22,7 +22,7 @@
     onDestroy(async () => {
         window.clearInterval(synchronization_timer)
     })
-    update_background("/img/burning_sands.jpg")
+    update_background("burning_sands.jpg")
 </script>
 
 <Page>
