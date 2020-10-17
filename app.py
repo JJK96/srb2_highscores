@@ -1,8 +1,6 @@
-from flask import Flask, render_template, send_file, send_from_directory
+from flask import Flask, send_file, send_from_directory
 from api import api_routes, api_prefix
 from map_voting import map_voting
-from highscores import highscores
-from config import Config
 from database import db
 from settings import username, password, host, database
 from flask_migrate import Migrate

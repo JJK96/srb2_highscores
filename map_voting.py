@@ -1,6 +1,5 @@
-from flask import render_template, request, Blueprint
+from flask import request, Blueprint
 from database import db, Map, Voted
-from config import Config
 
 map_voting = Blueprint('map_voting', __name__)
 

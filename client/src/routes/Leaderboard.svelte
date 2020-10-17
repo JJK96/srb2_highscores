@@ -32,9 +32,6 @@
     submit_form()
 </script>
 
-<!--<script src="{{config.static_dir}}/js/leaderboard.js"></script>
-<script src="{{config.static_dir}}/js/best_in_data.js"></script>-->
-
 <Page>
     <Title />
     <h2>Players' leaderboard (following mario kart's scoring system)</h2>
