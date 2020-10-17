@@ -111,7 +111,7 @@ def get_map_highscores(all_skins=False, map_id=None):
 
 # Gets the best skins or leaderboard of users in the database 
 # returns the leaderboard when arg for_leaderboard is true and the best skins when it's false
-def get_best_in_data(for_leaderboard, all_skins=False):
+def get_best_in_data(for_leaderboard, all_skins=False, per_skin=True):
     # setup the dictionaries for the storing of the results
     res = {}
     scoring = defaultdict(int)
@@ -133,7 +133,7 @@ def get_best_in_data(for_leaderboard, all_skins=False):
     
     # for every map in the highscores
     for map in get_maps():
-        scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins)
+        scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins, per_skin=per_skin)
         # if must return the best skins
         if for_leaderboard:
             # for every score in the map's highscores
@@ -247,7 +247,8 @@ def api():
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
         Endpoint(f'{api_prefix}/leaderboard', 'Get the leaderboard of the best players', [
-            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
+            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones'),
+            GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
         ]),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
@@ -297,11 +298,10 @@ def api_skins():
 def api_leaderboard():
     # request the params for the skins to be counted
     all_skins = request.args.get("all_skins") == "on"
-
-    skin_independent = request.args.get("skin_independent") == "on"
+    per_skin = request.args.get("per_skin") != "off"
    
     # return the leaderboard as json
-    resp = Response(response=json.dumps(get_best_in_data(True, all_skins)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_best_in_data(True, all_skins, per_skin=per_skin)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/bestskins
