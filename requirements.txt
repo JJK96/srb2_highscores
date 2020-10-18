@@ -3,5 +3,3 @@ flask_sqlalchemy
 Flask-Migrate
 fuzzywuzzy
 python-Levenshtein
-sqlalchemy_serializer
-pymysql
