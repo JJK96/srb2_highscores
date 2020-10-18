@@ -11,9 +11,12 @@
     import BestSkins from "./routes/Best_skins.svelte";
     import Leaderboard from "./routes/Leaderboard.svelte";
 
-    function toggle_menu(event) {
-        let items = document.getElementById("navbar-items");
-        items.classList.toggle("show");
+    let navbar = {
+        show: false,
+    }
+
+    function toggle_menu() {
+        navbar.show = !navbar.show
     }
 
     export let url = "";
@@ -22,12 +25,12 @@
 <div class="navbar">
     <div id="imzaq" class="navbar-container">
         <a href="/" id="i2aq8" class="navbar-brand"></a>
-        <div id="iylmi" class="navbar-burger" onclick="toggle_menu()">
+        <div id="iylmi" class="navbar-burger" on:click={toggle_menu}>
             <div class="navbar-burger-line"></div>
             <div class="navbar-burger-line"></div>
             <div class="navbar-burger-line"></div>
         </div>
-        <div id="navbar-items" class="navbar-items-c">
+        <div id="navbar-items" class="navbar-items-c {navbar.show?'show':''}">
             <nav data-gjs="navbar-menu" class="navbar-menu" use:links>
                 <a href="/" id="i7s3x" class="navbar-menu-link">Home</a>
                 <a href="/server_info" class="navbar-menu-link">Server info</a>
