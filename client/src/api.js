@@ -2,6 +2,10 @@ import {api_url} from './config.js';
 
 let assets = ["srb2.pk3", "zones.pk3", "player.dta", "patch.pk3"]
 
+function handle_response(response) {
+    return response.json()
+}
+
 function add_params(url, params) {
     Object.keys(params).forEach(key => {
         url.searchParams.append(key, params[key])
@@ -9,70 +13,51 @@ function add_params(url, params) {
     return url
 }
 
+function get_url(path, params=null) {
+    let url = new URL(api_url + path)
+    if (params) {
+        add_params(url, params)
+    }
+    return fetch(url).then(handle_response)
+}
+
 function get_maps() {
-    let url = new URL(api_url + '/maps')
-    return fetch(url).then(response => {
-            return response.json()
-        })
+    return get_url('/maps')
 }
 
 function get_server_info() {
-    return fetch(api_url + "/server_info").then(response => {
-        return response.json()
-    }).then(data => {
+    return get_url("/server_info").then(data => {
         data.filesneeded = data.filesneeded.filter(file => !assets.includes(file.name))
         return data
     })
 }
 
 function search(params) {
-    let url = new URL(api_url + '/search')
-    url = add_params(url, params)
-    return fetch(url).then(response => {
-        return response.json()
-    })
+    return get_url('/search', params)
 }
 
 function get_map(id) {
-    return fetch(api_url + '/maps/' + id).then(response => {
-        return response.json()
-    })
+    return get_url('/maps/' + id)
 }
 
 function get_skins() {
-    return fetch(api_url + '/skins').then(response => {
-        return response.json()
-    })
+    return get_url('/skins')
 }
 
 function get_users() {
-    return fetch(api_url + '/users').then(response => {
-        return response.json()
-    })
+    return get_url('/users')
 }
 
 function get_leaderboard(params) {
-    let url = new URL(api_url + "/leaderboard")
-    add_params(url, params)
-    return fetch(url).then(response => {
-        return response.json()
-    })
+    return get_url("/leaderboard", params)
 }
 
 
 function get_bestformaps(params) {
-    let url = new URL(api_url + '/bestformaps')
-    add_params(url, params)
-    return fetch(url).then(response => {
-        return response.json()
-    })
+    return get_url('/bestformaps', params)
 }
 function get_bestskins(params) {
-    let url = new URL(api_url + "/bestskins")
-    add_params(url, params)
-    return fetch(url).then(response => {
-        return response.json()
-    })
+    return get_url("/bestskins", params)
 }
 
 export default {
@@ -85,4 +70,5 @@ export default {
     get_leaderboard,
     get_bestformaps,
     get_bestskins,
+    get_url,
 }
