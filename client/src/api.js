@@ -1,5 +1,7 @@
 import {api_url} from './config.js';
 
+let assets = ["srb2.pk3", "zones.pk3", "player.dta", "patch.pk3"]
+
 function add_params(url, params) {
     Object.keys(params).forEach(key => {
         url.searchParams.append(key, params[key])
@@ -17,6 +19,9 @@ function get_maps() {
 function get_server_info() {
     return fetch(api_url + "/server_info").then(response => {
         return response.json()
+    }).then(data => {
+        data.filesneeded = data.filesneeded.filter(file => !assets.includes(file.name))
+        return data
     })
 }
 

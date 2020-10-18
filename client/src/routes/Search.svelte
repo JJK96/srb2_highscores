@@ -3,7 +3,6 @@
     import { onDestroy } from "svelte";
     import api from "../api.js";
     import { server_info_update_delay } from "../config.js";
-    import { get_server_info } from "../server_info.js";
     import { convert_form, update_background } from "../util.js";
 
     location.search
@@ -46,7 +45,7 @@
     }
 
     function update_map() {
-        get_server_info().then(data => {
+        api.get_server_info().then(data => {
             if (form.map_id != data.map.id) {
                 form.map_id = data.map.id
                 map_change()
