@@ -1,20 +1,13 @@
 <script>
     import Page from "../highscores/Page.svelte";
-    import { api_url } from "../config.js";
-    import { add_params } from "../util.js";
+    import api from "../api.js";
+    import { convert_form } from "../util.js";
 
     let skins = {}
     let form = {}
 
     var submit_form = function() {
-        // get the page endpoint from current pathname to build the api url needed
-        const best_in_data_api_url = api_url + "/bestskins"
-        var url = new URL(best_in_data_api_url)
-        fetch(add_params(url, form))
-            .then(response => {
-                return response.json()
-            })
-            .then(data => skins = data)
+        api.get_bestskins(convert_form(form)).then(data => skins = data)
     }
 
     submit_form()

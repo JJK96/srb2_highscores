@@ -1,31 +1,15 @@
 <script>
     import Page from "../highscores/Page.svelte";
-    import { api_url } from "../config.js";
-    import { add_params } from "../util.js";
+    import api from "../api.js";
+    import { convert_form } from "../util.js";
 
     let players = []
     let form = {}
 
     var submit_form = function() {
         // get the page endpoint from current pathname to build the api url needed
-        const best_in_data_api_url = api_url + "/leaderboard"
-        var url = new URL(best_in_data_api_url)
-        Object.keys(form).forEach(key => {
-            let value = form[key]
-            if (value) {
-                if (key == 'per_skin' && value === true) {
-                    value = "off"
-                } else if (value === true) {
-                    value = "on"
-                }
-                url.searchParams.append(key, value)
-            }
-        })
-        fetch(add_params(url, form))
-            .then(response => {
-                return response.json()
-            })
-            .then(data => players = data)
+        let params = convert_form(form)
+        api.get_leaderboard(params).then(data => players = data)
     }
 
     submit_form()

@@ -1,26 +1,13 @@
 <script>
     import Page from "../highscores/Page.svelte";
-    import { api_url } from "../config.js";
+    import { convert_form } from "../util.js";
+    import api from "../api.js";
 
     let form = {}
     let maps = []
 
     var submit_form = function() {
-        var url = new URL(api_url + '/bestformaps')
-        Object.keys(form).forEach(key => {
-            let value = form[key]
-            if (value) {
-                if (value === true) {
-                    value = "on"
-                }
-                url.searchParams.append(key, value)
-            }
-        })
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => maps = data)
+        api.get_bestformaps(convert_form(form)).then(data => maps = data)
     }
 
     submit_form()

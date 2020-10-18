@@ -1,7 +1,7 @@
 <script>
     import Page from "./Page.svelte";
     import { onDestroy } from "svelte";
-    import { api_url, server_info_update_delay } from "../config.js";
+    import { server_info_update_delay } from "../config.js";
     import { get_server_info } from "../server_info.js";
     import { update_background } from "../util.js";
 
@@ -9,7 +9,7 @@
     let server_ip = "srb2circuit.eu";
 
     function update_info_page() {
-        get_server_info(d => {
+        get_server_info().then(d => {
             data = d
             update_background(data.map.image)
         })

@@ -1,10 +1,10 @@
 <script>
     import Page from "../highscores/Page.svelte";
     import { onDestroy } from "svelte";
-    import { get_maps } from "../api.js";
-    import { api_url, server_info_update_delay } from "../config.js";
+    import api from "../api.js";
+    import { server_info_update_delay } from "../config.js";
     import { get_server_info } from "../server_info.js";
-    import { update_background } from "../util.js";
+    import { convert_form, update_background } from "../util.js";
 
     location.search
         .substr(1)
@@ -28,45 +28,25 @@
     }
 
     var submit_form = function() {
-        var url = new URL(api_url + '/search')
-        Object.keys(form).forEach(key => {
-            let value = form[key]
-            if (value) {
-                if (key == 'per_skin' && value === true) {
-                    value = "off"
-                } else if (value === true) {
-                    value = "on"
-                }
-                url.searchParams.append(key, value)
+        api.search(convert_form(form)).then(data => {
+            highscores = data
+            if (data.length) {
+                columns = Object.keys(data[0])
             }
         })
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                highscores = data
-                if (data.length) {
-                    columns = Object.keys(data[0])
-                }
-            })
     }
 
 
     //Called when map selector is changed
     function map_change() {
-        var url = new URL(api_url + '/maps/' + form.map_id)
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                update_background(data.image)
-            })
+        api.get_map(form.map_id)
+        .then(data => {
+            update_background(data.image)
+        })
     }
 
     function update_map() {
-        get_server_info(data => {
+        get_server_info().then(data => {
             if (form.map_id != data.map.id) {
                 form.map_id = data.map.id
                 map_change()
@@ -88,28 +68,10 @@
         }
     }
 
-    function get_skins() {
-        var url = new URL(api_url + '/skins')
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => skins = data)
-    }
-
-    function get_users() {
-        var url = new URL(api_url + '/users')
-        fetch(url)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => users = data)
-    }
-
-    get_skins()
-    get_maps().then(data => maps = data)
+    api.get_skins().then(data => skins = data)
+    api.get_maps().then(data => maps = data)
+    api.get_users().then(data => users = data)
     submit_form()
-    get_users()
 
     onDestroy(async () => {
         window.clearInterval(synchronization_timer)

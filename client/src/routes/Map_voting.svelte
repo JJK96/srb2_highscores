@@ -1,9 +1,13 @@
 <script>
     import Page from "./Page.svelte";
-    import { get_maps } from "../api.js";
+    import api from "../api.js";
     import { update_background } from "../util.js";
 
     let maps = []
+
+    function get_maps() {
+        api.get_maps().then(data => maps = data)
+    }
 
     function vote(map, up) {
         const formData = new FormData();
@@ -18,12 +22,12 @@
                     alert(text);
                 })
             } else {
-                get_maps().then(data => maps = data)
+                get_maps()
             }
         })
     }
 
-    get_maps().then(data => maps = data)
+    get_maps()
 
     update_background("map_voting.jpg");
 </script>

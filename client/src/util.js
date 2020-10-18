@@ -1,14 +1,17 @@
-export const add_params = (url, form) => {
+export const convert_form = (form) => {
+    let params = {}
     Object.keys(form).forEach(key => {
         let value = form[key]
         if (value) {
-            if (value === true) {
+            if (key == 'per_skin' && value === true) {
+                value = "off"
+            } else if (value === true) {
                 value = "on"
             }
-            url.searchParams.append(key, value)
+            params[key] = value
         }
     })
-    return url
+    return params
 }
 
 export function update_background(image) {
@@ -16,4 +19,3 @@ export function update_background(image) {
         document.body.style.backgroundImage = "url('/img/" + image + "')"
     }
 }
-
