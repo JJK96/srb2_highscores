@@ -283,7 +283,7 @@ def api():
         Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map', [
             GetParam('map_id', 'Search by map id')
         ]),
-        Endpoint(f'{api_prefix}/server_info/[<ip_address>]', 'Get info from the SRB2 server, optionally with the given ip_address instead of the default'),
+        Endpoint(f'{api_prefix}/server_info[/<ip_address>][/<port>]', 'Get info from the SRB2 server, optionally with the given ip_address and/or port instead of the default'),
         Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date'),
         Endpoint(f'{api_prefix}/time_stats', 'Get the number of records grouped based on the arguments', [
             GetParam('day', 'Group by day of the week'),
@@ -467,8 +467,8 @@ def api_search():
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
     return resp
 
-def get_server_info(ip=Config.srb2_server):
-    q = SRB2Query(ip)
+def get_server_info(ip=Config.srb2_server, port=5029):
+    q = SRB2Query(ip, port)
     serverpkt, playerpkt = q.askinfo()
     serverinfo = {}
     serverinfo['servername'] = serverpkt.servername
@@ -492,11 +492,12 @@ def get_server_info(ip=Config.srb2_server):
         serverinfo['players'].append(player)
     return serverinfo
 
-@api_routes.route('/server_info', defaults={'ip_address': Config.srb2_server})
+@api_routes.route('/server_info')
 @api_routes.route('/server_info/<ip_address>')
-def server_info(ip_address):
+@api_routes.route('/server_info/<ip_address>/<port>')
+def server_info(ip_address=Config.srb2_server, port=5029):
     response = json.dumps(
-        get_server_info(ip_address),
+        get_server_info(ip_address, port),
         default=lambda x: str(x))
     resp = Response(response=response, status=200, mimetype="application/json")
     return resp
