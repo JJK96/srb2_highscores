@@ -45,10 +45,12 @@ def get_skins():
 
 # get all the maps in the database
 # @param in_rotation: Only return maps that are in rotation
-def get_maps(id=None, in_rotation=True):
+def get_maps(id=None, in_rotation=True, ordering=None):
     query = db.session.query(Map)
     if in_rotation:
         query = query.filter(Map.in_rotation)
+    if ordering is not None:
+        query = query.order_by(ordering)
     if id:
         query = query.filter(Map.id == id)
         return query.one_or_none()
@@ -250,7 +252,8 @@ def api():
     # show the docs for every endpoint in the api section
     endpoints = [
         Endpoint(f'{api_prefix}/maps', 'Return all maps', [
-            GetParam('in_rotation', 'Get only maps that are in the rotation')
+            GetParam('in_rotation', 'Get only maps that are in the rotation'),
+            GetParam('order', 'Order by any of the returned columns', values=Map.__table__.columns._data.keys()),
         ]),
         Endpoint(f'{api_prefix}/maps/<id>', 'Return the specified map'),
         Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending. All get parameters can also be given as a json list of values e.g. map_id=[1,2]', [
@@ -299,8 +302,18 @@ def api():
 @api_routes.route('/maps/<id>')
 def maps(id=None):
     in_rotation = request.args.get("in_rotation") is not None
+    ordering = request.args.get("order")
+    descending = 'descending' in request.args
+
+    if ordering is not None:
+        order_by = getattr(Map, ordering)
+        if descending:
+            # order in descending order
+            order_by = order_by.desc()
+        ordering = order_by
+
     # return the maps as json
-    resp = Response(response=str(get_maps(id, in_rotation=in_rotation)), status=200, mimetype="application/json")
+    resp = Response(response=str(get_maps(id, in_rotation=in_rotation, ordering=ordering)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/users

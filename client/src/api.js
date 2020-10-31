@@ -21,8 +21,8 @@ function get_url(path, params=null) {
     return fetch(url).then(handle_response)
 }
 
-function get_maps() {
-    return get_url('/maps')
+function get_maps(params=null) {
+    return get_url('/maps', params)
 }
 
 function get_server_info() {

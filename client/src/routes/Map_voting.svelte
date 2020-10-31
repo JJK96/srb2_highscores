@@ -6,7 +6,11 @@
     let maps = []
 
     function get_maps() {
-        api.get_maps().then(data => maps = data)
+        let params = {
+            "order": "votes",
+            "descending": true
+        }
+        api.get_maps(params).then(data => maps = data)
     }
 
     function vote(map, up) {
