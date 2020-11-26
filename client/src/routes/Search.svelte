@@ -1,6 +1,7 @@
 <script>
     import Page from "../highscores/Page.svelte";
     import { onDestroy } from "svelte";
+    import Skin from "../forms/Skin.svelte";
     import api from "../api.js";
     import { server_info_update_delay } from "../config.js";
     import { convert_form, update_background } from "../util.js";
@@ -17,7 +18,6 @@
 
     let highscores = []
     let columns = []
-    let skins = []
     let maps = []
     let users = []
 
@@ -67,7 +67,6 @@
         }
     }
 
-    api.get_skins().then(data => skins = data)
     api.get_maps().then(data => maps = data)
     api.get_users().then(data => users = data)
     submit_form()
@@ -112,12 +111,7 @@
                     <label for="skin">Skin</label>
                 </td>
                 <td>
-                    <select bind:value={form.skin} id="skin" name="skin" type="select">
-                        <option value="">All skins</option>
-                        {#each skins as skin}
-                        <option value="{skin}">{skin}</option>
-                        {/each}
-                    </select>
+                    <Skin bind:value={form.skin}/>
                 </td>
             </tr>
             <tr>

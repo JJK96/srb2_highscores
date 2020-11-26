@@ -1,6 +1,7 @@
 <script>
     import Page from "../highscores/Page.svelte";
     import api from "../api.js";
+    import Skin from "../forms/Skin.svelte";
     import { convert_form } from "../util.js";
 
     let players = []
@@ -21,7 +22,7 @@
         <table>
             <tr>
                 <td>
-                    <label for="all_skins">All skins counted</label>
+                    <label for="all_skins">Include modded skins</label>
                 </td>
                 <td>
                     <input bind:checked={form.all_skins} type="checkbox" id="all_skins" name="all_skins" onchange="submit_form()" />
@@ -33,6 +34,14 @@
                 </td>
                 <td>
                     <input bind:checked={form.per_skin} type="checkbox" id="per_skin" name="per_skin" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="skin">Skin</label>
+                </td>
+                <td>
+                    <Skin bind:value={form.skin}/>
                 </td>
             </tr>
         </table>

@@ -279,6 +279,7 @@ def api():
             GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
             GetParam('include_scores', 'Add this parameter to include all scores that contributed to the calculation'),
             GetParam('username', 'Get only the scores of the given username'),
+            GetParam('skin', 'Get only scores for the given skin'),
         ]),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
             GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
@@ -342,6 +343,8 @@ def api_leaderboard():
     include_calculation = "include_calculation" in request.args
     username = request.args.get("username", None)
     skin = request.args.get("skin", None)
+    if skin and skin not in base_skins:
+        all_skins = True
    
     # return the leaderboard as json
     return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username, skin=skin))
