@@ -126,7 +126,7 @@ def get_best_skins(all_skins=False):
     return res
 
 # Gets the leaderboard of users in the database 
-def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, username=None):
+def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, username=None, skin=None):
     # setup the dictionaries for the storing of the results
     scoring = {}
     
@@ -144,10 +144,13 @@ def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, u
         10:2,
         11:1
     }
-    
+
     # for every map in the highscores
     for map in get_maps():
-        scores = search(filters=[Highscore.map_id == map.id], limit=11, all_skins=all_skins, per_skin=per_skin)
+        filters = [Highscore.map_id == map.id]
+        if skin:
+            filters.append(Highscore.skin == skin)
+        scores = search(filters=filters, limit=11, all_skins=all_skins, per_skin=per_skin)
         # for every score in the map's highscores
         for place, score in enumerate(scores):
             score_username = score.username
@@ -338,9 +341,10 @@ def api_leaderboard():
     per_skin = request.args.get("per_skin") != "off"
     include_calculation = "include_calculation" in request.args
     username = request.args.get("username", None)
+    skin = request.args.get("skin", None)
    
     # return the leaderboard as json
-    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username))
+    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username, skin=skin))
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
