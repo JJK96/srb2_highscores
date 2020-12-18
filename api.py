@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 import json
 from json.decoder import JSONDecodeError
 from collections import defaultdict
-from srb2_query import SRB2Query
+from srb2_query import SRB2Query, mapname_to_num
 from config import Config
 from fuzzywuzzy import process, fuzz
 from werkzeug.exceptions import HTTPException
@@ -259,6 +259,7 @@ def api():
             GetParam('order', 'Order by any of the returned columns', values=Map.__table__.columns._data.keys()),
         ]),
         Endpoint(f'{api_prefix}/maps/<id>', 'Return the specified map'),
+        Endpoint(f'{api_prefix}/maps/<mapname>', 'Return the map indicated by the mapname parameter e.g. MAPR0 or r0'),
         Endpoint(f'{api_prefix}/search', 'Return highscores ordered by time ascending. All get parameters can also be given as a json list of values e.g. map_id=[1,2]', [
             GetParam('username', 'Search by username'),
             GetParam('mapname', 'Search by map name'),
@@ -303,11 +304,14 @@ def api():
 
 # when the route is api/maps
 @api_routes.route('/maps')
-@api_routes.route('/maps/<id>')
-def maps(id=None):
+@api_routes.route('/maps/<int:id>')
+@api_routes.route('/maps/<mapname>')
+def maps(id=None, mapname=None):
     in_rotation = request.args.get("in_rotation") is not None
     ordering = request.args.get("order")
     descending = 'descending' in request.args
+    if mapname:
+        id = mapname_to_num(mapname)
 
     if ordering is not None:
         order_by = getattr(Map, ordering)
@@ -316,9 +320,13 @@ def maps(id=None):
             order_by = order_by.desc()
         ordering = order_by
 
-    # return the maps as json
-    resp = Response(response=str(get_maps(id, in_rotation=in_rotation, ordering=ordering)), status=200, mimetype="application/json")
-    return resp
+    maps = get_maps(id, in_rotation=in_rotation, ordering=ordering)
+    if maps is None:
+        return jsonify(error="Map not found"), 404
+    else:
+        # return the maps as json
+        resp = Response(response=str(maps), status=200, mimetype="application/json")
+        return resp
 
 # when the route is api/users
 @api_routes.route('/users')
