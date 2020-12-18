@@ -311,7 +311,8 @@ def maps(id=None, mapname=None):
     ordering = request.args.get("order")
     descending = 'descending' in request.args
     if mapname:
-        id = mapname_to_num(mapname)
+        # subtract 1 because we start at 0 instead of 1
+        id = mapname_to_num(mapname)-1
 
     if ordering is not None:
         order_by = getattr(Map, ordering)
