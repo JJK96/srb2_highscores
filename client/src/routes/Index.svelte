@@ -17,7 +17,7 @@ you surprised.</p>
 </section>
 <section class="white_text" id="discord_server">
 <h2>Discord Server</h2>
-Feel free to join <a href="https://discord.gg/dkFwrs" class="link_background">our discord server</a>!
+Feel free to join <a href="https://discord.gg/wNwg9vk" class="link_background">our discord server</a>!
 Using the server, we keep users up to date with the new stuff on the server,
 while also providing support and tips for beginners.
 </section>
