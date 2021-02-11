@@ -540,3 +540,8 @@ def handle_exception(e):
     if isinstance(e, HTTPException):
         code = e.code
     return jsonify(error=str(e)), code
+
+@api_routes.after_request
+def set_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = "*"
+    return response
