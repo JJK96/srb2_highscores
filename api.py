@@ -126,7 +126,7 @@ def get_best_skins(all_skins=False):
     return res
 
 # Gets the leaderboard of users in the database 
-def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, username=None, skin=None):
+def get_leaderboard(include_calculation=False, username=None, skin=None, limit=11, filters=None, **kwargs):
     # setup the dictionaries for the storing of the results
     scoring = {}
     
@@ -147,10 +147,11 @@ def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, u
 
     # for every map in the highscores
     for map in get_maps():
-        filters = [Highscore.map_id == map.id]
+        map_filters = [] + filters
+        map_filters.append(Highscore.map_id == map.id)
         if skin:
-            filters.append(Highscore.skin == skin)
-        scores = search(filters=filters, limit=11, all_skins=all_skins, per_skin=per_skin)
+            map_filters.append(Highscore.skin == skin)
+        scores = search(filters=map_filters, limit=limit, **kwargs)
         # for every score in the map's highscores
         for place, score in enumerate(scores):
             score_username = score.username
@@ -347,16 +348,21 @@ def api_skins():
 @api_routes.route('/leaderboard')
 def api_leaderboard():
     # request the params for the skins to be counted
-    all_skins = request.args.get("all_skins") == "on"
-    per_skin = request.args.get("per_skin") != "off"
+    search_params = parse_search_params()
+
     include_calculation = "include_calculation" in request.args
     username = request.args.get("username", None)
     skin = request.args.get("skin", None)
     if skin and skin not in base_skins:
-        all_skins = True
-   
+        search_params['all_skins'] = True
+
     # return the leaderboard as json
-    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username, skin=skin))
+    return jsonify(get_leaderboard(
+        include_calculation=include_calculation,
+        username=username,
+        skin=skin,
+        **search_params
+    ))
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
@@ -377,9 +383,11 @@ def api_highscores():
     resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins, map_id=map_id), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
-def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False, per_skin=True):
+def search(filters=None, ordering=None, limit=None, all_skins=False, all_scores=False, per_skin=True, start_date=None, end_date=None):
     if not limit:
         limit = 1000
+    if filters is None:
+        filters = []
 
     # get the highscores NOT ORDERED
     query = db.session.query(
@@ -423,20 +431,25 @@ def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=Fa
     for filter in filters:
         query = query.filter(filter)
 
+    if start_date is not None:
+        query = query.filter(Highscore.datetime >= start_date)
+
+    if end_date is not None:
+        query = query.filter(Highscore.datetime <= end_date)
+
     query = query.order_by(Highscore.time.asc())
 
     query = query.limit(limit)
 
     return query.all()
-    
 
-# when the route is api/search
-@api_routes.route('/search')
-def api_search():
+def parse_search_params():
     all_scores = request.args.get("all_scores") == "on"
     all_skins = request.args.get("all_skins") == "on"
     per_skin = request.args.get("per_skin") != "off"
     no_fuzzy = request.args.get('fuzzy') == "off"
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
     # request the params for the ordering
     order = request.args.get('order')
@@ -478,7 +491,25 @@ def api_search():
         except (ValueError, TypeError):
             return jsonify(error="Invalid limit"), 400
 
-    scores = search(all_scores=all_scores, all_skins=all_skins, filters=filters, ordering=ordering, limit=limit, per_skin=per_skin)
+    params = {}
+    params['all_scores']  = all_scores
+    params['all_skins']   = all_skins
+    params['per_skin']    = per_skin
+    params['ordering']    = ordering
+    params['filters']     = filters
+    if limit:
+        params['limit']       = limit
+    if start_date:
+        params['start_date']  = start_date
+    if end_date:
+        params['end_date']    = end_date
+    return params
+
+# when the route is api/search
+@api_routes.route('/search')
+def api_search():
+    params = parse_search_params()
+    scores = search(**params)
     # return the query as json
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
     return resp
