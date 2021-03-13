@@ -57,7 +57,7 @@ def get_maps(id=None, in_rotation=True, ordering=None):
     return query.all()
 
 # get the best highscores for each skin in each map
-def get_map_highscores(all_skins=False, map_id=None):
+def get_map_highscores(all_skins=False, map_id=None, start_date=None, end_date=None, **kwargs):
     # get the best time for each map and skin
     best_map = db.session.query(
         db.func.min(Highscore.time).label("time"),
@@ -90,6 +90,12 @@ def get_map_highscores(all_skins=False, map_id=None):
     if map_id:
         query = query.filter(Highscore.map_id == map_id)
 
+    if start_date is not None:
+        query = query.filter(Highscore.datetime >= start_date)
+
+    if end_date is not None:
+        query = query.filter(Highscore.datetime <= end_date)
+
     maps = {}
     
     # for every score in the filtered scores
@@ -112,12 +118,18 @@ def get_map_highscores(all_skins=False, map_id=None):
     return [x for x in maps.values()]
 
 # Gets the best skins in the database 
-def get_best_skins(all_skins=False):
+def get_best_skins(all_skins=False, limit=1, filters=None, **kwargs):
     scoring = defaultdict(int)
+    if filters is None:
+        filters = []
+
     # for every map in the highscores
     for map in get_maps():
-        scores = search(filters=[Highscore.map_id == map.id], limit=1, all_skins=all_skins)
-        scoring[scores[0].skin] += 1
+        map_filters = [] + filters
+        map_filters.append(Highscore.map_id == map.id)
+        scores = search(filters=map_filters, **kwargs)
+        if len(scores) > 0:
+            scoring[scores[0].skin] += 1
 
     res = {}
     # sort the dictionary by most points
@@ -126,7 +138,7 @@ def get_best_skins(all_skins=False):
     return res
 
 # Gets the leaderboard of users in the database 
-def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, username=None, skin=None):
+def get_leaderboard(include_calculation=False, username=None, skin=None, limit=11, filters=None, **kwargs):
     # setup the dictionaries for the storing of the results
     scoring = {}
     
@@ -145,12 +157,16 @@ def get_leaderboard(all_skins=False, per_skin=True, include_calculation=False, u
         11:1
     }
 
+    if filters is None:
+        filters = []
+
     # for every map in the highscores
     for map in get_maps():
-        filters = [Highscore.map_id == map.id]
+        map_filters = [] + filters
+        map_filters.append(Highscore.map_id == map.id)
         if skin:
-            filters.append(Highscore.skin == skin)
-        scores = search(filters=filters, limit=11, all_skins=all_skins, per_skin=per_skin)
+            map_filters.append(Highscore.skin == skin)
+        scores = search(filters=map_filters, limit=limit, **kwargs)
         # for every score in the map's highscores
         for place, score in enumerate(scores):
             score_username = score.username
@@ -271,7 +287,9 @@ def api():
             GetParam('all_scores', 'Set to "on" to get all the scores instead of just the best ones'),
             GetParam('all_skins', 'Set to "on" to get all the skins instead of just the vanilla ones'),
             GetParam('per_skin', 'Set to "off" to get only one score per user per map'),
-            GetParam('fuzzy', 'Set to "off" to disable fuzzy matching')
+            GetParam('start_date', 'Return only scores after this date'),
+            GetParam('end_date', 'Return only scores before this date'),
+            GetParam('fuzzy', 'Set to "off" to disable fuzzy matching'),
         ]),
         Endpoint(f'{api_prefix}/skins', 'Get the different skins in the database'),
         Endpoint(f'{api_prefix}/users', 'Get the different users in the database'),
@@ -281,12 +299,18 @@ def api():
             GetParam('include_scores', 'Add this parameter to include all scores that contributed to the calculation'),
             GetParam('username', 'Get only the scores of the given username'),
             GetParam('skin', 'Get only scores for the given skin'),
+            GetParam('start_date', 'Use only scores after this date'),
+            GetParam('end_date', 'Use only scores before this date'),
         ]),
         Endpoint(f'{api_prefix}/bestskins', 'Get the best skins by number of best timed tracks without modded skins', [
-            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones')
+            GetParam('all_skins', 'Set to "on" to count points for the scores with all the skins instead of just the vanilla ones'),
+            GetParam('start_date', 'Use only scores after this date'),
+            GetParam('end_date', 'Use only scores before this date'),
         ]),
         Endpoint(f'{api_prefix}/bestformaps', 'Get the highscores divided by map', [
-            GetParam('map_id', 'Search by map id')
+            GetParam('map_id', 'Search by map id'),
+            GetParam('start_date', 'Use only scores after this date'),
+            GetParam('end_date', 'Use only scores before this date'),
         ]),
         Endpoint(f'{api_prefix}/server_info[/<ip_address>][/<port>]', 'Get info from the SRB2 server, optionally with the given ip_address and/or port instead of the default'),
         Endpoint(f'{api_prefix}/num_plays/[<start_date>]', 'Get the number of times each map was played since the given date'),
@@ -347,39 +371,45 @@ def api_skins():
 @api_routes.route('/leaderboard')
 def api_leaderboard():
     # request the params for the skins to be counted
-    all_skins = request.args.get("all_skins") == "on"
-    per_skin = request.args.get("per_skin") != "off"
+    search_params = parse_search_params()
+
     include_calculation = "include_calculation" in request.args
     username = request.args.get("username", None)
     skin = request.args.get("skin", None)
     if skin and skin not in base_skins:
-        all_skins = True
-   
+        search_params['all_skins'] = True
+
     # return the leaderboard as json
-    return jsonify(get_leaderboard(all_skins=all_skins, per_skin=per_skin, include_calculation=include_calculation, username=username, skin=skin))
+    return jsonify(get_leaderboard(
+        include_calculation=include_calculation,
+        username=username,
+        skin=skin,
+        **search_params
+    ))
 
 # when the route is api/bestskins
 @api_routes.route('/bestskins')
 def api_best_skins():
-    # request the params for the skins to be counted
-    all_skins = request.args.get("all_skins") == "on"
+    search_params = parse_search_params()
     
     # return the best skins as json
-    resp = Response(response=json.dumps(get_best_skins(all_skins=all_skins)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_best_skins(**search_params)), status=200, mimetype="application/json")
     return resp
 
 # when the route is api/bestformaps
 @api_routes.route('/bestformaps')
 def api_highscores():
-    all_skins = request.args.get("all_skins") == "on"
+    search_params = parse_search_params()
     map_id = request.args.get("map_id")
     # return the highscores for each skin in each map as json
-    resp = Response(response=json.dumps(get_map_highscores(all_skins=all_skins, map_id=map_id), default=lambda o: str(o)), status=200, mimetype="application/json")
+    resp = Response(response=json.dumps(get_map_highscores(map_id=map_id, **search_params), default=lambda o: str(o)), status=200, mimetype="application/json")
     return resp
 
-def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=False, per_skin=True):
+def search(filters=None, ordering=None, limit=None, all_skins=False, all_scores=False, per_skin=True, start_date=None, end_date=None):
     if not limit:
         limit = 1000
+    if filters is None:
+        filters = []
 
     # get the highscores NOT ORDERED
     query = db.session.query(
@@ -423,20 +453,27 @@ def search(filters=[], ordering=None, limit=None, all_skins=False, all_scores=Fa
     for filter in filters:
         query = query.filter(filter)
 
+    if start_date is not None:
+        query = query.filter(Highscore.datetime >= start_date)
+
+    if end_date is not None:
+        query = query.filter(Highscore.datetime <= end_date)
+
     query = query.order_by(Highscore.time.asc())
 
     query = query.limit(limit)
 
     return query.all()
-    
 
-# when the route is api/search
-@api_routes.route('/search')
-def api_search():
+def parse_search_params():
+    params = {}
+
     all_scores = request.args.get("all_scores") == "on"
     all_skins = request.args.get("all_skins") == "on"
     per_skin = request.args.get("per_skin") != "off"
     no_fuzzy = request.args.get('fuzzy') == "off"
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
 
     # request the params for the ordering
     order = request.args.get('order')
@@ -474,11 +511,26 @@ def api_search():
     limit = request.args.get('limit',None)
     if limit:
         try:
-            limit = int(limit)
+            params['limit'] = int(limit)
         except (ValueError, TypeError):
             return jsonify(error="Invalid limit"), 400
 
-    scores = search(all_scores=all_scores, all_skins=all_skins, filters=filters, ordering=ordering, limit=limit, per_skin=per_skin)
+    params['all_scores']  = all_scores
+    params['all_skins']   = all_skins
+    params['per_skin']    = per_skin
+    params['ordering']    = ordering
+    params['filters']     = filters
+    if start_date:
+        params['start_date']  = start_date
+    if end_date:
+        params['end_date']    = end_date
+    return params
+
+# when the route is api/search
+@api_routes.route('/search')
+def api_search():
+    params = parse_search_params()
+    scores = search(**params)
     # return the query as json
     resp = Response(response=to_json(scores), status=200, mimetype="application/json")
     return resp
