@@ -13,6 +13,26 @@
         api.get_leaderboard(params).then(data => players = data)
     }
 
+    var get_current_month = function() {
+        var d = new Date()
+<<<<<<< HEAD
+        var year = d.getFullYear()
+        var month = d.getMonth()
+
+        var first_day = new Date(year, month, 1)
+        var last_day  = new Date(year, month+1, 0)
+
+        form.start_date = first_day.toISOString().split("T")[0]
+        form.end_date   = last_day.toISOString().split("T")[0]
+=======
+        var current_day = d.toISOString().split("T")[0].split("-")
+
+        form.start_date = [current_day[0], current_day[1], 1].join("-")
+        form.end_date   = [current_day[0], current_day[1], 31].join("-")
+>>>>>>> 1ae4219... Date control on Leaderboard user interface
+        submit_form()
+    }
+
     submit_form()
 </script>
 
@@ -25,7 +45,7 @@
                     <label for="all_skins">Include modded skins</label>
                 </td>
                 <td>
-                    <input bind:checked={form.all_skins} type="checkbox" id="all_skins" name="all_skins" onchange="submit_form()" />
+                    <input bind:checked={form.all_skins} type="checkbox" id="all_skins" name="all_skins"/>
                 </td>
             </tr>
             <tr>
@@ -33,7 +53,7 @@
                     <label for="per_skin">One score per user per map</label>
                 </td>
                 <td>
-                    <input bind:checked={form.per_skin} type="checkbox" id="per_skin" name="per_skin" />
+                    <input bind:checked={form.per_skin} type="checkbox" id="per_skin" name="per_skin"/>
                 </td>
             </tr>
             <tr>
@@ -44,8 +64,26 @@
                     <Skin bind:value={form.skin}/>
                 </td>
             </tr>
+            <tr>
+                <td>
+                    <label for="start_date">Start Date</label>
+                </td>
+                <td>
+                    <input bind:value={form.start_date} type="date" id="start_date" name="start_date"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="end_date">End Date</label>
+                </td>
+                <td>
+                    <input bind:value={form.end_date} type="date" id="end_date" name="end_date"/>
+                </td>
+            </tr>
         </table>
     </form>
+    <label for="current_month">Scores for current month</label>
+    <input type="button" id="current_month" name="current_month" value="Set date" on:click={get_current_month}/>
     <table border=1>
         <thead>
             <tr>            
