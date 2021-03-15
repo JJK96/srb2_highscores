@@ -2,7 +2,7 @@
     import Page from "../highscores/Page.svelte";
     import api from "../api.js";
     import Skin from "../forms/Skin.svelte";
-    import { convert_form } from "../util.js";
+    import { convert_form, toISODate } from "../util.js";
 
     let players = []
     let form = {}
@@ -21,8 +21,8 @@
         var first_day = new Date(year, month, 1)
         var last_day  = new Date(year, month+1, 0)
 
-        form.start_date = first_day.toISOString().split("T")[0]
-        form.end_date   = last_day.toISOString().split("T")[0]
+        form.start_date = toISODate(first_day).split("T")[0]
+        form.end_date   = toISODate(last_day).split("T")[0]
         submit_form()
     }
 
