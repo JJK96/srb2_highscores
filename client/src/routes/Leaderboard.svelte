@@ -21,8 +21,8 @@
         var first_day = new Date(year, month, 1)
         var last_day  = new Date(year, month+1, 0)
 
-        form.start_date = toISODate(first_day).split("T")[0]
-        form.end_date   = toISODate(last_day).split("T")[0]
+        form.start_date = toISODate(first_day)
+        form.end_date   = toISODate(last_day)
         submit_form()
     }
 
