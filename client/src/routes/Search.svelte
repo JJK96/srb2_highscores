@@ -167,7 +167,7 @@
                     <label for="sync">Synch with SRB2</label>
                 </td>
                 <td>
-                    <input type="checkbox" id="sync" on:click={update_sync} on:change|stopPropagation="" />
+                    <input type="checkbox" id="sync" on:click={update_sync} on:change|stopPropagation={""} />
                 </td>
             </tr>
             
