@@ -27,7 +27,7 @@ function get_maps(params=null) {
 
 function get_server_info() {
     return get_url("/server_info").then(data => {
-        data.filesneeded = data.filesneeded.filter(file => !assets.includes(file.name))
+        data.filesneeded = data.filesneeded.filter(file => !assets.includes(file.filename))
         return data
     })
 }

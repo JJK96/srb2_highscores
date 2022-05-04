@@ -51,7 +51,7 @@
             <h2>Mods</h2>
             <ul id="files_list">
                 {#each data.filesneeded as file}
-                    <li>{file.name}</li>
+                    <li>{file.filename}</li>
                 {/each}
             </ul>
         </div>
