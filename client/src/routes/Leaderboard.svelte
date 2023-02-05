@@ -19,7 +19,7 @@
         var month = d.getMonth()
 
         var first_day = new Date(year, month, 1)
-        var last_day  = new Date(year, month+1, 0)
+        var last_day  = new Date(year, month+1, 1)
 
         form.start_date = toISODate(first_day)
         form.end_date   = toISODate(last_day)
