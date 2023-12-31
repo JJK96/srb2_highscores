@@ -11,9 +11,9 @@
     <p>Feel free to make a pull request for any of these projects</p>
 
     <ul>
-        <li><a href="https://github.com/JJK96/SRB2/tree/speedrun_server">SRB2 server</a></li>
+        <li><a href="https://github.com/Meziu/SRB2">SRB2 server</a></li>
         <li><a href="https://github.com/jjk96/srb2_highscores">Website</a></li>
         <li><a href="https://github.com/Meziu/srb2_discordbot">Discord bot</a></li>
-        <li><a href="https://github.com/JJK96/SRB2/tree/speedrun_server/src/luascripts">Lua scripts</a></li>
+        <li><a href="https://github.com/Meziu/SRB2/tree/master/src/luascripts">Lua scripts</a></li>
     </ul>
 </Page>
