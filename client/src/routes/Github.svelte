@@ -15,5 +15,6 @@
         <li><a href="https://github.com/jjk96/srb2_highscores">Website</a></li>
         <li><a href="https://github.com/Meziu/srb2_discordbot">Discord bot</a></li>
         <li><a href="https://github.com/Meziu/SRB2/tree/master/src/luascripts">Lua scripts</a></li>
+        <li><a href="https://github.com/JJK96/srb2_mapvote">Map voting script</a></li>
     </ul>
 </Page>
