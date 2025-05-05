@@ -1,3 +1,3 @@
 import sys
-sys.path.insert(0, '/srv/http/scripts/srb2_highscores/')
+sys.path.insert(0, '/srv/website/')
 from app import app as application
